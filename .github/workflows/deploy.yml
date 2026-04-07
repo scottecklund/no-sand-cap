@@ -1,0 +1,50 @@
+# .github/workflows/deploy.yml
+# Auto-deploys nosandcap-handicap.html → index.html via FTP to cPanel
+# Triggers on every push to main branch
+
+name: Deploy to cPanel via FTP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Rename the file to index.html before upload
+      - name: Rename to index.html
+        run: cp nosandcap-handicap.html index.html
+
+      # 3. Deploy via FTP to cPanel
+      #    Only uploads index.html to the target directory
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}         # e.g. ftp.yourdomain.com
+          username: ${{ secrets.FTP_USERNAME }}      # cPanel FTP username
+          password: ${{ secrets.FTP_PASSWORD }}      # cPanel FTP password
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}  # e.g. /public_html/ (MUST end with /)
+          local-dir: ./                              # repo root (where index.html now lives)
+
+          # Only upload index.html — ignore everything else
+          include: |
+            index.html
+
+          # Exclude everything by default, then the include above whitelists index.html
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/nosandcap-handicap.html
+            **/README.md
+            **/node_modules/**
+
+          # DANGER ZONE: set to true if you want the remote dir cleaned of other files
+          # Leave false if other files exist in the target directory
+          dangerous-clean-slate: false
