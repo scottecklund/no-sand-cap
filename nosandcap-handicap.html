@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>No Sand Cap · Handicap</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#002B5C;--navy2:#003878;--navy3:#004A9F;
+  --sky:#42A5F5;--white:#fff;--off:#F4F6FA;--off2:#EBF0F8;
+  --border:#D0D9E8;--border2:#B8C8DC;
+  --text:#0D1B2A;--text2:#3A5070;--text3:#7A90A8;
+  --red:#D32F2F;--redp:#FFEBEE;
+  --green:#2E7D32;--greenp:#E8F5E9;
+  --gold:#F57F17;--goldp:#FFF8E1;--goldb:#FFD54F;
+  --r:8px;--rl:14px;--rxl:20px;
+  --sh:0 1px 4px rgba(0,30,80,.10);
+  --shm:0 4px 20px rgba(0,30,80,.15);
+  --shl:0 8px 40px rgba(0,30,80,.18)
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--navy);color:var(--text);font-size:15px;line-height:1.5;display:flex;flex-direction:column}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:32px 24px}
+.login-logo{margin-bottom:32px;text-align:center}
+.login-logo .flag{font-size:52px;line-height:1}
+.login-logo h1{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.5px;margin-top:12px}
+.login-logo p{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px;letter-spacing:.5px;text-transform:uppercase}
+.login-box{background:#fff;border-radius:var(--rxl);padding:28px 24px;width:100%;max-width:360px;box-shadow:var(--shl)}
+.login-box h2{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px;text-align:center}
+.lfield{margin-bottom:14px}
+.lfield label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase}
+.lfield input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:15px;font-family:inherit;color:var(--text);outline:none;transition:border-color .15s}
+.lfield input:focus{border-color:var(--navy3);box-shadow:0 0 0 3px rgba(0,74,159,.12)}
+.login-err{background:var(--redp);color:var(--red);border:1px solid #f5c6cb;border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:14px;display:none;text-align:center;line-height:1.4}
+.login-err.show{display:block;animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.btn-login{width:100%;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:.3px;transition:background .15s;margin-top:4px}
+.btn-login:hover{background:var(--navy3)}
+.login-footer{margin-top:20px;text-align:center;font-size:12px;color:rgba(255,255,255,.35)}
+
+/* APP SHELL */
+#app{display:none;flex-direction:column;height:100%;overflow:hidden}
+#app.on{display:flex}
+
+/* Topbar */
+.topbar{background:var(--navy);color:#fff;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
+.topbar-logo{display:flex;align-items:center;gap:8px}
+.topbar-logo .flag{font-size:20px}
+.topbar-logo .site{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.2px}
+.topbar-logo .sub{font-size:10px;color:rgba(255,255,255,.45);margin-left:2px;letter-spacing:.5px;text-transform:uppercase}
+.tg-arrow{position:relative;display:flex;align-items:center}
+.tg-arrow::after{content:'▾';position:absolute;right:8px;color:rgba(255,255,255,.5);pointer-events:none;font-size:11px}
+.tg-arrow select{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:5px 26px 5px 10px;font-size:13px;font-weight:500;font-family:inherit;outline:none;appearance:none;-webkit-appearance:none;max-width:160px}
+.tg-arrow select option{background:var(--navy);color:#fff}
+.logout-btn{background:none;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.7);padding:5px 10px;border-radius:6px;font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s}
+.logout-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* Content + bottom nav */
+.content{flex:1;overflow-y:auto;background:var(--off);padding-bottom:72px}
+.bnav{height:56px;background:#fff;border-top:1px solid var(--border);display:flex;align-items:stretch;flex-shrink:0;z-index:10;justify-content:center;gap:0}
+.bn{width:72px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;border:none;background:none;font-family:inherit;color:var(--text3);padding:6px 0;transition:color .15s}
+.bn:hover,.bn.on{color:var(--navy)}
+.bn-icon{font-size:17px;line-height:1}
+.bn-label{font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.bn.on .bn-label{font-weight:700}
+
+/* Panels */
+.panel{display:none}.panel.on{display:block}
+.wrap{max-width:700px;margin:0 auto;padding:0 14px}
+
+/* Page header */
+.page-hdr{background:var(--navy2);color:#fff;padding:18px 16px 16px;position:sticky;top:0;z-index:5}
+.page-hdr-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.page-hdr h2{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.page-hdr p{font-size:12px;color:rgba(255,255,255,.55);margin-top:1px}
+
+.sh{padding:18px 0 10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.sh h3{font-size:14px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px}
+
+/* Cards */
+.card{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;margin-bottom:12px;border:1px solid var(--border)}
+.card-hdr{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.card-hdr h4{font-size:13px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.card-hdr .sub{font-size:11px;color:rgba(255,255,255,.55)}
+
+/* Course selector */
+.course-selector{background:var(--navy2);border-radius:var(--rl);padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,.08)}
+.cs-title{font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(255,255,255,.45);text-transform:uppercase;margin-bottom:12px}
+.cs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:480px){.cs-grid{grid-template-columns:1fr 1fr}}
+.cs-field label{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:4px;display:block;letter-spacing:.3px}
+.cs-arrow{position:relative}.cs-arrow::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.4);pointer-events:none;font-size:11px}
+.cs-arrow select{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:6px;padding:9px 26px 9px 10px;font-size:13px;font-family:inherit;outline:none;width:100%;appearance:none;-webkit-appearance:none}
+.cs-arrow select option{background:var(--navy2);color:#fff}
+.cs-arrow select:focus{border-color:var(--sky)}
+.cs-info{grid-column:1/-1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px 12px;font-size:12px;color:rgba(255,255,255,.7);display:flex;gap:16px;flex-wrap:wrap}
+.cs-info span{white-space:nowrap}.cs-info strong{color:#fff}
+
+/* Score table */
+.score-tbl{width:100%;border-collapse:collapse}
+.score-tbl thead th{background:var(--off2);padding:9px 14px;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;text-align:left;border-bottom:1px solid var(--border)}
+.score-tbl thead th:not(:first-child){text-align:right}
+.score-tbl tbody td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:14px}
+.score-tbl tbody td:not(:first-child){text-align:right}
+.score-tbl tbody tr:last-child td{border-bottom:none}
+.score-tbl tbody tr:hover{background:var(--off)}
+.p-name{font-weight:600;font-size:14px;color:var(--text)}
+.score-input{width:80px;padding:8px 6px;border:1.5px solid var(--border);border-radius:6px;font-size:16px;font-family:inherit;text-align:center;outline:none;transition:border-color .15s;background:#fff;color:var(--text)}
+.score-input:focus{border-color:var(--navy3);box-shadow:0 0 0 3px rgba(0,74,159,.1)}
+.idx-chip{font-size:15px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.rounds-badge{background:var(--off2);color:var(--text3);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:600;display:inline-block}
+
+/* Result rows */
+.result-row{display:flex;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);gap:12px}
+.result-row:last-child{border-bottom:none}
+.result-rank{width:24px;height:24px;border-radius:50%;background:var(--off2);color:var(--text3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.result-rank.first{background:var(--navy);color:#fff}
+.result-name{font-weight:600;font-size:14px}
+.result-meta{font-size:11px;color:var(--text3);font-weight:500;margin-top:1px}
+.result-idx{font-size:22px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
+.result-ch{font-size:28px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;min-width:42px;text-align:right}
+.low-badge{background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.3px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+.low-badge.gold{background:var(--gold)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--r);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:all .15s}
+.btn-navy{background:var(--navy);color:#fff}.btn-navy:hover{background:var(--navy3)}
+.btn-ghost{background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2)}.btn-ghost:hover{background:rgba(255,255,255,.15);color:#fff}
+.btn-outline{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}.btn-outline:hover{background:var(--off2)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#1b5e20}
+.btn-red{background:none;border:1.5px solid var(--red);color:var(--red)}.btn-red:hover{background:var(--redp)}
+.btn-sm{padding:7px 13px;font-size:12px}
+.btn-xs{padding:4px 9px;font-size:11px}
+.btn-full{width:100%;padding:14px}
+.xbtn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:12px;padding:2px 6px;border-radius:4px;font-family:inherit;transition:color .15s}
+.xbtn:hover{color:var(--red);background:var(--redp)}
+
+/* Forms */
+select,input[type="number"],input[type="text"],input[type="password"]{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;font-family:inherit;background:#fff;color:var(--text);outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none}
+select{padding-right:28px}
+select:focus,input:focus{border-color:var(--navy3);box-shadow:0 0 0 3px rgba(0,74,159,.1)}
+.sw{position:relative}.sw::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;font-size:12px}
+.sw select{padding-right:28px}
+
+/* Alerts */
+.alert-warn{background:var(--goldp);border:1px solid var(--goldb);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--gold);margin-bottom:12px}
+.alert-info{background:var(--off2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6}
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px}
+.empty .ico{font-size:40px;margin-bottom:12px}
+.loading{text-align:center;padding:30px;color:var(--text3);font-size:14px}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--navy3);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Player items */
+.player-item{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px}
+.player-item:last-child{border-bottom:none}
+.av{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.av-sm{width:28px;height:28px;font-size:11px}
+
+/* Round history accordion */
+.hist-toggle{background:none;border:none;cursor:pointer;font-size:12px;color:var(--navy3);font-weight:600;font-family:inherit;padding:0;text-decoration:underline}
+.hist-body{display:none;padding:10px 16px 12px;background:var(--off);border-top:1px solid var(--border)}
+.hist-body.open{display:block}
+.hist-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.hist-tbl th{padding:5px 8px 5px 0;color:var(--text3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--border)}
+.hist-tbl td{padding:6px 8px 6px 0;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2)}
+.hist-tbl tr:last-child td{border-bottom:none}
+.tdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+
+/* Group cards */
+.group-card{background:#fff;border-radius:var(--rl);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
+.group-card-hdr{background:var(--navy2);color:#fff;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.group-card-hdr h4{font-size:14px;font-weight:700}
+.group-card-body{padding:13px 16px}
+
+/* Season history */
+.week-card{background:#fff;border-radius:var(--rl);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
+.week-hdr{background:var(--navy2);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:8px}
+.week-hdr h4{font-size:13px;font-weight:700}
+.week-hdr .sub{font-size:11px;color:rgba(255,255,255,.55)}
+.week-hdr .chevron{font-size:12px;color:rgba(255,255,255,.5);transition:transform .2s}
+.week-hdr.open .chevron{transform:rotate(180deg)}
+.week-body{display:none;padding:0}
+.week-body.open{display:block}
+.week-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:10px}
+.week-row:last-child{border-bottom:none}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,20,60,.5);z-index:200;align-items:flex-end;justify-content:center}
+.modal-bg.on{display:flex}
+@media(min-width:480px){.modal-bg{align-items:center}}
+.modal{background:#fff;border-radius:var(--rxl) var(--rxl) 0 0;padding:24px;width:100%;max-width:480px;box-shadow:var(--shl);max-height:90vh;overflow-y:auto}
+@media(min-width:480px){.modal{border-radius:var(--rxl)}}
+.modal h3{font-size:17px;font-weight:800;color:var(--navy);margin-bottom:18px}
+.modal .fl{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;display:block;letter-spacing:.3px;text-transform:uppercase}
+.modal .fgroup{margin-bottom:14px}
+.modal-btns{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+
+/* How it works */
+.step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.snum{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.step h4{font-size:14px;font-weight:700;margin-bottom:3px;color:var(--navy)}
+.step p{font-size:13px;color:var(--text2);line-height:1.6}
+.formula{background:var(--off2);border:1px solid var(--border);border-radius:var(--r);padding:9px 13px;font-family:'Courier New',monospace;font-size:12px;color:var(--navy);margin-top:6px;line-height:1.9}
+
+/* Course data table */
+.dt{width:100%;border-collapse:collapse;font-size:13px}
+.dt th{text-align:left;padding:8px 10px 8px 0;color:var(--text3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
+.dt th:not(:first-child){text-align:center}
+.dt td{padding:8px 10px 8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.dt td:not(:first-child){text-align:center}
+.dt tr:last-child td{border-bottom:none}
+.dt tr.default-tee td{background:var(--off2)}
+
+/* Print styles */
+@media print{
+  .topbar,.bnav,.course-selector,.score-tbl,.btn,.btn-full,.sh,.alert-info,.alert-warn,#panel-players,#panel-groups,#panel-courses,#panel-history,.page-hdr button{display:none!important}
+  body{background:#fff;overflow:auto}
+  html,body{height:auto;overflow:auto}
+  .content{overflow:visible;padding-bottom:0}
+  #panel-game{display:block!important}
+  .result-row{break-inside:avoid}
+  .card{box-shadow:none;border:1px solid #ccc}
+  .card-hdr{background:#002B5C!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .result-rank.first{background:#002B5C!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .print-header{display:block!important}
+}
+.print-header{display:none;text-align:center;padding:16px 0 8px;font-size:18px;font-weight:800;color:var(--navy)}
+
+/* Override button styles */
+.override-btn{background:none;border:1px solid var(--border);border-radius:5px;color:var(--text3);font-size:11px;padding:2px 6px;cursor:pointer;font-family:inherit;transition:all .15s;line-height:1.4}
+.override-btn:hover{background:var(--goldp);border-color:var(--goldb);color:var(--gold)}
+.override-active{background:var(--goldp);border-color:var(--goldb);color:var(--gold)}
+tr.has-override{background:#fffbeb!important}
+tr.has-override .idx-chip{color:var(--gold)!important}
+
+/* Score sheet modal */
+.ss-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,20,60,.6);z-index:300;align-items:center;justify-content:center;padding:16px}
+.ss-modal-bg.on{display:flex}
+.ss-modal{background:#fff;border-radius:var(--rxl);width:100%;max-width:600px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shl)}
+.ss-modal-hdr{background:var(--navy);color:#fff;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ss-modal-hdr h3{font-size:15px;font-weight:700}
+.ss-modal-controls{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;flex-shrink:0;background:var(--off)}
+.ss-cf{display:flex;flex-direction:column;gap:3px}
+.ss-cf label{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
+.ss-cf select,.ss-cf input{padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;color:var(--text);outline:none;background:#fff;min-width:110px}
+.ss-cf select:focus,.ss-cf input:focus{border-color:var(--navy3)}
+.ss-scroll{overflow-y:auto;flex:1}
+.ss-sheet-hdr{background:var(--navy);color:#fff;padding:14px 18px 12px;display:flex;align-items:flex-start;justify-content:space-between}
+.ss-sheet-hdr h4{font-size:17px;font-weight:800}
+.ss-sheet-hdr .sub{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.ss-meta{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap}
+.ss-meta .lbl{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.4px;font-weight:600;display:block}
+.ss-meta .val{font-size:13px;font-weight:700;color:#fff;display:block;margin-top:1px}
+.ss-col-hdrs{display:grid;grid-template-columns:30px 1fr 86px;background:var(--off2);border-bottom:2px solid var(--border2);padding:6px 0}
+.ss-ch{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;padding:0 10px}
+.ss-ch.center{text-align:center}
+.ss-prow{display:grid;grid-template-columns:30px 1fr 86px;align-items:center;min-height:38px;border-bottom:1px solid var(--off2)}
+.ss-prow:nth-child(even){background:#FAFBFD}
+.ss-prow.divider{border-top:2px solid var(--border)}
+.ss-num{padding:0 0 0 10px;font-size:11px;color:var(--border2);font-weight:700}
+.ss-name{padding:5px 10px}
+.ss-name .nm{font-size:13px;font-weight:700;color:var(--text);line-height:1.2}
+.ss-name .nn{font-size:11px;color:var(--text3);margin-top:1px}
+.ss-score{padding:4px 12px 4px 6px;text-align:center}
+.ss-box{width:56px;height:28px;border:2px solid var(--border2);border-radius:5px;background:#fff;display:inline-block}
+.ss-ftr{background:var(--off2);padding:8px 18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}
+.ss-ftr p{font-size:10px;color:var(--text3)}
+.ss-ftr strong{color:var(--text2)}
+
+/* Seed handicap import */
+.seed-tbl{width:100%;border-collapse:collapse}
+.seed-tbl thead th{background:var(--off2);padding:9px 14px;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;text-align:left;border-bottom:1px solid var(--border)}
+.seed-tbl thead th:last-child{text-align:right}
+.seed-tbl tbody td{padding:8px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:14px}
+.seed-tbl tbody tr:last-child td{border-bottom:none}
+.seed-tbl tbody tr:hover{background:var(--off)}
+.seed-tbl tbody tr.has-rounds td{background:#f0fdf4}
+.seed-tbl tbody tr.has-rounds td:first-child{border-left:3px solid var(--green)}
+.seed-input{width:80px;padding:7px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:15px;font-family:inherit;text-align:center;outline:none;transition:border-color .15s;background:#fff;color:var(--text)}
+.seed-input:focus{border-color:var(--navy3);box-shadow:0 0 0 3px rgba(0,74,159,.1)}
+.seed-input:disabled{background:var(--off2);color:var(--text3);cursor:not-allowed}
+.seed-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;white-space:nowrap}
+.seed-status.done{background:var(--greenp);color:var(--green)}
+.seed-status.empty{background:var(--off2);color:var(--text3)}
+.seed-status.new{background:#EFF6FF;color:#1D4ED8}
+.seed-progress{height:4px;background:var(--border);border-radius:2px;margin-bottom:14px;overflow:hidden}
+.seed-progress-bar{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+
+/* Pairings */
+.pairing-controls{background:var(--navy2);border-radius:var(--rl);padding:16px;margin-bottom:14px}
+.pc-title{font-size:10px;font-weight:700;letter-spacing:.8px;color:rgba(255,255,255,.45);text-transform:uppercase;margin-bottom:12px}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.pc-field label{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:4px;display:block;letter-spacing:.3px}
+.format-btns{display:flex;gap:6px}
+.fmt-btn{flex:1;padding:9px 8px;border-radius:6px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);transition:all .15s;text-align:center}
+.fmt-btn.on{background:#fff;color:var(--navy);border-color:#fff}
+.player-checklist{background:#fff;border-radius:var(--rl);border:1px solid var(--border);overflow:hidden;margin-bottom:12px}
+.pcl-hdr{background:var(--off2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.pcl-hdr span{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.pcl-count{font-size:12px;color:var(--text3);font-weight:500}
+.pcl-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.pcl-item:last-child{border-bottom:none}
+.pcl-item:hover{background:var(--off)}
+.pcl-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--navy);flex-shrink:0;cursor:pointer}
+.pcl-item.blind-draw{background:#FFF8E1;border-left:3px solid var(--gold)}
+.blind-tag{font-size:10px;font-weight:700;background:var(--goldp);color:var(--gold);border:1px solid var(--goldb);border-radius:8px;padding:1px 6px;margin-left:6px}
+
+/* Manual pairing builder */
+.manual-group-slot{background:var(--off2);border:1px solid var(--border);border-radius:var(--rl);padding:12px 14px;margin-bottom:10px}
+.mgs-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mgs-hdr h5{font-size:13px;font-weight:700;color:var(--navy)}
+.mgs-hdr .mgs-count{font-size:11px;color:var(--text3);font-weight:500}
+.mgs-players{display:flex;flex-wrap:wrap;gap:6px;min-height:34px}
+.mgs-player-chip{display:inline-flex;align-items:center;gap:5px;background:var(--navy);color:#fff;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s}
+.mgs-player-chip:hover{background:var(--red)}
+.mgs-player-chip .chip-x{font-size:11px;opacity:.7}
+.pool-chip{display:inline-flex;align-items:center;gap:4px;background:#fff;color:var(--navy);border:1.5px solid var(--border);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.pool-chip:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pool-chip.full{opacity:.4;cursor:not-allowed;pointer-events:none}
+
+.group-card-pair{background:#fff;border-radius:var(--rl);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
+.gcp-hdr{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border)}
+.gcp-hdr h4{font-size:13px;font-weight:700;color:var(--navy)}
+.gcp-hdcp{font-size:12px;color:var(--text3);font-weight:500}
+.gcp-diff{font-size:12px;font-weight:600;padding:2px 8px;border-radius:8px}
+.gcp-diff.best{background:var(--greenp);color:var(--green)}
+.gcp-diff.ok{background:var(--off2);color:var(--text2)}
+.pair-player-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);gap:10px;cursor:grab}
+.pair-player-row:last-child{border-bottom:none}
+.pair-player-row.dragging{opacity:.4;background:var(--off2)}
+.drag-handle{color:var(--text3);font-size:14px;cursor:grab;padding:0 4px;user-select:none}
+.pair-hdcp-badge{font-size:13px;font-weight:700;color:var(--navy);min-width:28px;text-align:right;font-variant-numeric:tabular-nums}
+.pair-summary{background:var(--off2);border-top:1px solid var(--border);padding:8px 14px;display:flex;justify-content:space-between;align-items:center}
+.pair-summary span{font-size:12px;color:var(--text2);font-weight:500}
+.pair-summary strong{font-size:13px;color:var(--navy);font-weight:700}
+.late-add-bar{background:var(--goldp);border:1px solid var(--goldb);border-radius:var(--rl);padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.late-add-bar label{font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap}
+
+/* Toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;box-shadow:var(--shm);opacity:0;transition:opacity .25s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.on{opacity:1}.toast.err{background:var(--red)}.toast.ok{background:var(--green)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-logo">
+    <div class="flag">⛳</div>
+    <h1>No Sand Cap</h1>
+    <p>nosandcap.com · Handicap System</p>
+  </div>
+  <div class="login-box">
+    <h2>Sign In</h2>
+    <div class="login-err" id="login-err">Incorrect username or password.</div>
+    <div class="lfield"><label>Username</label><input type="text" id="login-user" placeholder="Username" autocomplete="username"/></div>
+    <div class="lfield"><label>Password</label><input type="password" id="login-pw" placeholder="Password" autocomplete="current-password"/></div>
+    <button class="btn-login" onclick="doLogin()">Sign In</button>
+  </div>
+  <div class="login-footer">nosandcap.com · USGA Differential Method</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo"><span class="flag">⛳</span><div><span class="site">No Sand Cap</span><span class="sub">Hdcp</span></div></div>
+    <div class="tg-arrow"><select id="sel-group" onchange="onGroupChange()"><option value="">Select group...</option></select></div>
+    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  </div>
+
+  <div class="content" id="main-content">
+
+    <!-- GAME -->
+    <div id="panel-game" class="panel">
+      <div class="page-hdr">
+        <div class="page-hdr-inner">
+          <div><h2>Weekly Game</h2><p>Enter scores &amp; calculate handicaps</p></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="openScoreSheet()">📋 Score Sheet</button>
+            <button class="btn btn-ghost btn-sm" onclick="printResults()">🖨 Print</button>
+            <button class="btn btn-ghost btn-sm" onclick="onGroupChange()">↻</button>
+          </div>
+        </div>
+      </div>
+      <div class="wrap" style="padding-top:16px">
+        <div class="print-header" id="print-header">No Sand Cap · Weekly Results</div>
+        <div id="game-content"><div class="empty"><div class="ico">⛳</div><p>Select a game group at the top.</p></div></div>
+      </div>
+    </div>
+
+    <!-- PLAYERS -->
+    <div id="panel-players" class="panel">
+      <div class="page-hdr">
+        <div class="page-hdr-inner">
+          <div><h2>Players</h2><p>All registered golfers</p></div>
+          <button class="btn btn-ghost btn-sm" onclick="openPlayerModal()">+ Add Player</button>
+        </div>
+      </div>
+      <div class="wrap" style="padding-top:16px">
+        <div class="alert-info">Tap a player to view their round history or edit their details.</div>
+        <div class="card"><div id="players-list"><div class="loading"><span class="spinner"></span>Loading...</div></div></div>
+      </div>
+    </div>
+
+    <!-- GROUPS -->
+    <div id="panel-groups" class="panel">
+      <div class="page-hdr">
+        <div class="page-hdr-inner">
+          <div><h2>Game Groups</h2><p>Saturday, Thursday, etc.</p></div>
+          <button class="btn btn-ghost btn-sm" onclick="openGroupModal()">+ New Group</button>
+        </div>
+      </div>
+      <div class="wrap" style="padding-top:16px">
+        <div class="alert-info">Each game day has its own player roster and independent round histories.</div>
+        <div id="groups-list"><div class="loading"><span class="spinner"></span>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="panel-history" class="panel">
+      <div class="page-hdr">
+        <div class="page-hdr-inner">
+          <div><h2>Season History</h2><p>Past weekly results</p></div>
+        </div>
+      </div>
+      <div class="wrap" style="padding-top:16px">
+        <div class="sh" style="padding-top:8px">
+          <h3>Group</h3>
+          <div class="sw" style="width:200px"><select id="hist-group-sel" onchange="loadHistory()"><option value="">Select group...</option></select></div>
+        </div>
+        <div id="history-content"><div class="empty"><div class="ico">📊</div><p>Select a group to view history.</p></div></div>
+      </div>
+    </div>
+
+    <!-- COURSES -->
+    <div id="panel-courses" class="panel">
+      <div class="page-hdr"><div class="page-hdr-inner"><div><h2>Courses &amp; Info</h2></div></div></div>
+      <div class="wrap" style="padding-top:16px">
+        <div class="sh"><h3>Prairie Green Golf Course</h3></div>
+        <div class="card"><div style="padding:16px;overflow-x:auto"><table class="dt">
+          <thead><tr><th>Tee</th><th>Men Rtg</th><th>Men Slp</th><th>Women Rtg</th><th>Women Slp</th><th style="text-align:right;padding-right:0">Yards</th></tr></thead>
+          <tbody id="pg-tbl"></tbody>
+        </table></div></div>
+        <div class="sh"><h3>Elmwood Golf Course</h3></div>
+        <div class="card"><div style="padding:16px;overflow-x:auto"><table class="dt">
+          <thead><tr><th>Tee</th><th>Men Rtg</th><th>Men Slp</th><th>Women Rtg</th><th>Women Slp</th><th style="text-align:right;padding-right:0">Yards</th></tr></thead>
+          <tbody id="elm-tbl"></tbody>
+        </table></div></div>
+        <div class="sh"><h3>How It Works</h3></div>
+        <div class="card"><div style="padding:16px">
+          <div class="step"><div class="snum">1</div><div><h4>Score Differential</h4><p>Computed per round using gross score, course rating, and slope.</p><div class="formula">Diff = (Score − Rating) × (113 ÷ Slope)</div></div></div>
+          <div class="step"><div class="snum">2</div><div><h4>Rolling 4-round window</h4><p>Each group tracks the most recent 4 rounds per player. A 5th round pushes out the oldest. Missed weeks are simply not entered.</p></div></div>
+          <div class="step"><div class="snum">3</div><div><h4>Handicap Index</h4><div class="formula">Index = (Avg of all diffs) × 0.96  [truncated]</div></div></div>
+          <div class="step"><div class="snum">4</div><div><h4>Course Handicap</h4><div class="formula">Course Hdcp = round( Index × (Slope÷113) + (Rating−Par) )</div></div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- PAIRINGS -->
+    <div id="panel-pairings" class="panel on">
+      <div class="page-hdr">
+        <div class="page-hdr-inner">
+          <div><h2>Pairings</h2><p id="pair-hdr-sub">Set up this week's game</p></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-sm" onclick="printPairings()">🖨 Print</button>
+            <button class="btn btn-ghost btn-sm" onclick="shufflePairings()">🔀</button>
+          </div>
+        </div>
+      </div>
+      <div class="wrap" style="padding-top:16px">
+
+        <!-- Controls -->
+        <div class="pairing-controls">
+          <div class="pc-title">Game Setup</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+            <div class="cs-field">
+              <label>Game Group</label>
+              <div class="cs-arrow"><select id="pair-group-sel" onchange="loadPairingPlayers()">
+                <option value="">Select group...</option>
+              </select></div>
+            </div>
+            <div class="cs-field">
+              <label>Date</label>
+              <input type="date" id="pair-date" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;outline:none;width:100%;color-scheme:dark" oninput="updatePairHdr()"/>
+            </div>
+            <div class="cs-field">
+              <label>Course</label>
+              <div class="cs-arrow"><select id="pair-course" onchange="pairCourseChange()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:9px 26px 9px 10px;font-size:13px;font-family:inherit;outline:none;width:100%;appearance:none;-webkit-appearance:none">
+                <option>Elmwood</option><option>Prairie Green</option>
+              </select></div>
+            </div>
+            <div class="cs-field">
+              <label>Tee Box</label>
+              <div class="cs-arrow"><select id="pair-tee" onchange="updatePairHdr()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:9px 26px 9px 10px;font-size:13px;font-family:inherit;outline:none;width:100%;appearance:none;-webkit-appearance:none">
+              </select></div>
+            </div>
+          </div>
+          <!-- Mode toggle -->
+          <div style="display:flex;gap:6px;margin-bottom:12px">
+            <div class="fmt-btn on" id="mode-auto" onclick="setPairMode('auto')" style="flex:1;text-align:center">⚡ Auto Pair</div>
+            <div class="fmt-btn"   id="mode-manual" onclick="setPairMode('manual')" style="flex:1;text-align:center">✋ Manual</div>
+          </div>
+          <!-- Auto generate button -->
+          <div id="auto-btn-row" style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-navy btn-sm" onclick="generatePairings()" style="flex:1">⚡ Generate — check players below first</button>
+            <button class="btn btn-ghost btn-sm" onclick="shufflePairings()">🔀</button>
+          </div>
+          <!-- Manual mode hint -->
+          <div id="manual-hint" style="display:none;font-size:12px;color:rgba(255,255,255,.6);line-height:1.6">
+            Select who's playing, then build groups manually below. Tap a player to assign them to a group.
+          </div>
+        </div>
+
+        <!-- Override warning banner -->
+        <div id="pair-warning" style="display:none;background:var(--goldp);border:1px solid var(--goldb);border-radius:var(--rl);padding:14px 16px;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:600;color:var(--gold);margin-bottom:10px" id="pair-warning-msg"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <span style="font-size:12px;color:var(--gold);font-weight:500">Include everyone using:</span>
+            <button class="btn btn-sm" style="background:var(--gold);color:#fff;border:none" onclick="generateWithBlind('4')">Blind Draw (foursomes)</button>
+            <button class="btn btn-sm" style="background:#fff;color:var(--gold);border:1.5px solid var(--goldb)" onclick="generateWithBlind('3')">Blind Draw (threesomes)</button>
+            <span style="font-size:12px;color:var(--gold);font-weight:500;margin-left:4px">Or drop players:</span>
+            <button class="btn btn-sm" style="background:#fff;color:var(--gold);border:1.5px solid var(--goldb)" onclick="generateForce4s()">Drop to foursomes</button>
+            <button class="btn btn-sm" style="background:#fff;color:var(--gold);border:1.5px solid var(--goldb)" onclick="generateForce3s()">Drop to threesomes</button>
+          </div>
+        </div>
+
+        <!-- Late add bar -->
+        <div class="late-add-bar" id="late-add-bar" style="display:none">
+          <label>Add Late Entry:</label>
+          <div class="sw" style="flex:1;min-width:160px">
+            <select id="late-add-sel"><option value="">Select player...</option></select>
+          </div>
+          <button class="btn btn-sm" style="background:var(--gold);color:#fff;border:none" onclick="addLateEntry()">Add to Group</button>
+        </div>
+
+        <!-- Player checklist (auto + manual both use this) -->
+        <div id="pairing-checklist" style="display:none">
+          <div class="sh"><h3>Who's Playing Today</h3><div style="display:flex;gap:6px">
+            <button class="btn btn-navy btn-xs" onclick="checkAll(true)">✓ All</button>
+            <button class="btn btn-outline btn-xs" onclick="checkAll(false)">✗ None</button>
+          </div></div>
+          <div class="player-checklist">
+            <div class="pcl-hdr">
+              <span>Tap to select players</span>
+              <span class="pcl-count" id="pcl-count">0 selected</span>
+            </div>
+            <div id="pcl-body"></div>
+          </div>
+          <!-- Manual builder (only shown in manual mode) -->
+          <div id="manual-builder" style="display:none;padding:14px 16px;border-top:1px solid var(--border)">
+            <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Build Groups</div>
+            <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+              <button class="btn btn-navy btn-sm" onclick="addManualGroup(4)">+ Foursome</button>
+              <button class="btn btn-navy btn-sm" onclick="addManualGroup(3)">+ Threesome</button>
+              <button class="btn btn-outline btn-sm" onclick="clearManualGroups()">Clear All</button>
+            </div>
+            <div id="manual-groups-area"></div>
+            <div style="margin-top:12px">
+              <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">Unassigned Players</div>
+              <div id="unassigned-pool" style="display:flex;flex-wrap:wrap;gap:6px;min-height:32px;background:var(--off2);border-radius:var(--r);padding:8px;border:1px dashed var(--border)"></div>
+            </div>
+            <button class="btn btn-navy btn-full" style="margin-top:12px" onclick="commitManualPairings()">Save Groups</button>
+          </div>
+        </div>
+
+        <!-- Generated pairings output -->
+        <div id="pairings-output" style="display:none">
+          <div class="sh"><h3 id="pairings-title">Groups</h3><span style="font-size:12px;color:var(--text3)" id="pairings-meta"></span></div>
+          <div id="pairings-cards"></div>
+          <div style="height:16px"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SEED HANDICAPS -->
+    <div id="panel-seed" class="panel">
+      <div class="page-hdr">
+        <div class="page-hdr-inner">
+          <div><h2>Seed Handicaps</h2><p>Import GHIN indexes to start the season</p></div>
+        </div>
+      </div>
+      <div class="wrap" style="padding-top:16px">
+
+        <div class="alert-info">
+          <strong>One-time season setup.</strong> Enter each player's current GHIN Handicap Index below. The app will back-calculate a synthetic differential and store it as their Round 1 starting point. After that, the rolling 4-round system takes over automatically.<br><br>
+          Only enter indexes for players who don't already have rounds recorded — existing rounds won't be touched.
+        </div>
+
+        <!-- Group selector -->
+        <div class="sh" style="padding-top:4px">
+          <h3>Game Group</h3>
+          <div class="sw" style="width:200px">
+            <select id="seed-group-sel" onchange="loadSeedPlayers()">
+              <option value="">Select group...</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="seed-content">
+          <div class="empty"><div class="ico">🌱</div><p>Select a group to load players.</p></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div class="bnav">
+    <button class="bn on" onclick="switchPanel('pairings',this)"><div class="bn-icon">🤝</div><div class="bn-label">Pairings</div></button>
+    <button class="bn"    onclick="switchPanel('game',this)"><div class="bn-icon">⛳</div><div class="bn-label">Scores</div></button>
+    <button class="bn"    onclick="switchPanel('groups',this)"><div class="bn-icon">📅</div><div class="bn-label">Groups</div></button>
+    <button class="bn"    onclick="switchPanel('players',this)"><div class="bn-icon">👤</div><div class="bn-label">Players</div></button>
+    <button class="bn"    onclick="switchPanel('seed',this)"><div class="bn-icon">🌱</div><div class="bn-label">Seed</div></button>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modal-group">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>New Game Group</h3>
+    <div class="fgroup"><span class="fl">Group Name</span><input type="text" id="new-group-name" placeholder="e.g. Saturday Game"/></div>
+    <div class="modal-btns">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-group')">Cancel</button>
+      <button class="btn btn-navy btn-sm" onclick="createGroup()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-player">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3 id="player-modal-title">Add Player</h3>
+    <input type="hidden" id="edit-player-id"/>
+    <div class="fgroup"><span class="fl">Full Name</span><input type="text" id="new-player-name" placeholder="Player's full name"/></div>
+    <div class="fgroup"><span class="fl">Nickname <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></span><input type="text" id="new-player-nick" placeholder="e.g. Boo Boo, Rambo, Wobb"/></div>
+    <div class="modal-btns">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-player')">Cancel</button>
+      <button class="btn btn-navy btn-sm" id="player-modal-save" onclick="savePlayer()">Add Player</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERRIDE MODAL -->
+<div class="modal-bg" id="modal-override">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-handle"></div>
+    <h3>Override Handicap Index</h3>
+    <input type="hidden" id="override-pid"/>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">
+      Enter a manual index for <strong id="override-name"></strong> for this week's game only.
+      This does not affect their round history.
+    </p>
+    <div class="fgroup">
+      <span class="fl">Handicap Index</span>
+      <input type="number" id="override-val" inputmode="decimal" step="0.1" min="-10" max="54" placeholder="e.g. 14.2"/>
+    </div>
+    <div style="margin-top:6px;display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm" onclick="clearOverride()">Clear Override</button>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-override')">Cancel</button>
+      <button class="btn btn-navy btn-sm" onclick="saveOverride()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- SCORE SHEET MODAL -->
+<div class="ss-modal-bg" id="modal-scoresheet">
+  <div class="ss-modal">
+    <div class="ss-modal-hdr">
+      <h3>📋 Weekly Score Sheet</h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="printScoreSheet()">🖨 Print</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-scoresheet')">✕</button>
+      </div>
+    </div>
+    <div class="ss-modal-controls">
+      <div class="ss-cf">
+        <label>Date</label>
+        <input type="date" id="ss-date" oninput="updateScoreSheet()"/>
+      </div>
+      <div class="ss-cf">
+        <label>Course</label>
+        <select id="ss-course" oninput="updateScoreSheet()">
+          <option>Prairie Green</option>
+          <option>Elmwood</option>
+        </select>
+      </div>
+      <div class="ss-cf">
+        <label>Tee Box</label>
+        <select id="ss-tee" oninput="updateScoreSheet()">
+          <option>Gold</option>
+          <option>Black</option>
+          <option>Blue</option>
+          <option>Blue/Gold</option>
+          <option>Gold/Red</option>
+          <option>Red</option>
+          <option>White</option>
+        </select>
+      </div>
+    </div>
+    <div class="ss-scroll" id="ss-scroll">
+      <div id="ss-sheet-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+// ─── Auth ─────────────────────────────────────────────────────
+const CREDS={user:'DOG',pw:'DOG123'};
+function doLogin(){
+  const u=$('login-user').value.trim().toUpperCase();
+  const p=$('login-pw').value;
+  const err=$('login-err');
+  err.classList.remove('show');
+  if(u===CREDS.user&&p===CREDS.pw){
+    $('login-screen').style.display='none';
+    $('app').classList.add('on');
+    init();
+  }else{
+    if(!u&&!p){
+      err.textContent='Please enter your username and password.';
+    } else if(!u){
+      err.textContent='Please enter your username.';
+    } else if(!p){
+      err.textContent='Please enter your password.';
+    } else {
+      err.textContent='Incorrect username or password. Try again.';
+    }
+    err.classList.add('show');
+    $('login-pw').value='';
+    setTimeout(()=>$('login-pw').focus(),50);
+  }
+}
+function doLogout(){
+  $('app').classList.remove('on');
+  $('login-screen').style.display='flex';
+  $('login-user').value='';$('login-pw').value='';
+  $('login-err').classList.remove('show');
+}
+['login-user','login-pw'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+});
+
+// ─── Supabase ─────────────────────────────────────────────────
+const SB_URL='https://njavosunooktneofvdrg.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qYXZvc3Vub29rdG5lb2Z2ZHJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MTMxMDksImV4cCI6MjA5MTA4OTEwOX0.1u2iyI1G7QdIVezmA0jmTiqxsrVhFKYooVbxF3is3sk';
+const SBH={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+async function sb(table,method='GET',body=null,query=''){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}${query}`,{
+    method,
+    headers:{...SBH,...(method==='GET'?{Accept:'application/json',Prefer:'return=representation'}:{Prefer:'return=representation'})},
+    body:body?JSON.stringify(body):null
+  });
+  if(!r.ok){const e=await r.text();throw new Error(e);}
+  const t=await r.text();return t?JSON.parse(t):[];
+}
+
+// ─── Course data ──────────────────────────────────────────────
+const COURSES={
+  "Prairie Green":{par:72,tees:[
+    {name:"Black",    col:"#222",   mR:74.7,mS:134,wR:81.5,wS:143,yds:7179},
+    {name:"Blue",     col:"#1565C0",mR:72.3,mS:129,wR:78.6,wS:137,yds:6667},
+    {name:"Blue/Gold",col:"#42A5F5",mR:70.8,mS:128,wR:76.9,wS:133,yds:6415},
+    {name:"Gold",     col:"#F57F17",mR:69.5,mS:123,wR:75.4,wS:130,yds:6087},
+    {name:"Gold/Red", col:"#BF360C",mR:67.5,mS:118,wR:72.9,wS:122,yds:5693},
+    {name:"Red",      col:"#C62828",mR:65.6,mS:114,wR:70.5,wS:115,yds:5270},
+  ]},
+  "Elmwood":{par:72,tees:[
+    {name:"Black",    col:"#222",   mR:75.0,mS:127,wR:82.1,wS:140,yds:7214},
+    {name:"Blue",     col:"#1565C0",mR:73.0,mS:122,wR:79.7,wS:135,yds:6750},
+    {name:"Blue/Gold",col:"#42A5F5",mR:71.4,mS:122,wR:77.9,wS:131,yds:6300},
+    {name:"Gold",     col:"#F57F17",mR:70.0,mS:120,wR:76.3,wS:128,yds:6164},
+    {name:"Gold/Red", col:"#BF360C",mR:68.1,mS:116,wR:74.0,wS:123,yds:5720},
+    {name:"Red",      col:"#C62828",mR:66.5,mS:112,wR:71.5,wS:118,yds:5384},
+    {name:"White",    col:"#78909C",mR:62.8,mS:106,wR:67.1,wS:109,yds:4580},
+  ]}
+};
+function getTee(cn,tn){return COURSES[cn].tees.find(t=>t.name===tn);}
+function rs(tee,g){return g==='Men'?[tee.mR,tee.mS]:[tee.wR,tee.wS];}
+function computeIndex(rounds){
+  if(!rounds.length)return null;
+  const avg=rounds.reduce((s,r)=>s+parseFloat(r.differential),0)/rounds.length;
+  return Math.trunc(avg*0.96*10)/10;
+}
+function computeCH(idx,slope,rating,par){return Math.round(idx*(slope/113)+(rating-par));}
+function ini(n){return n.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'P';}
+function teeOpts(cn,sel){return COURSES[cn].tees.map(t=>`<option${t.name===sel?' selected':''}>${t.name}</option>`).join('');}
+function dispName(p){return p.nickname||p.name;}
+function scoreLabel(p){
+  if(p.nickname)return `<span class="p-name">${p.nickname}</span><div style="font-size:11px;color:var(--text3);font-weight:400;margin-top:1px">${p.name}</div>`;
+  return `<span class="p-name">${p.name}</span>`;
+}
+
+// ─── State ────────────────────────────────────────────────────
+let allGroups=[],allPlayers=[],currentGroupId=null,lastResults=[];
+let indexOverrides={};
+// Game session: once loaded, stays live until scores submitted or coordinator clears it
+let gameSessionGroupId=null;  // which group the live game is for
+let gameSessionDone=false;    // true after scores submitted this session
+
+// ─── Toast ────────────────────────────────────────────────────
+function toast(msg,type=''){
+  const t=$('toast');t.textContent=msg;
+  t.className='toast'+(type?' '+type:'');
+  t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),2400);
+}
+
+// ─── Course tables ────────────────────────────────────────────
+function populateCourseTables(){
+  [['pg-tbl','Prairie Green'],['elm-tbl','Elmwood']].forEach(([id,cn])=>{
+    $(id).innerHTML=COURSES[cn].tees.map(t=>`
+      <tr${t.name==='Gold'?' class="default-tee"':''}>
+        <td><span style="display:inline-flex;align-items:center;gap:6px">
+          <span style="width:9px;height:9px;border-radius:50%;background:${t.col};flex-shrink:0"></span>
+          <strong>${t.name}</strong>${t.name==='Gold'?'<span style="font-size:10px;background:#FFF8E1;color:#F57F17;border-radius:4px;padding:1px 5px;margin-left:3px;font-weight:700">default</span>':''}
+        </span></td>
+        <td>${t.mR}</td><td>${t.mS}</td><td>${t.wR}</td><td>${t.wS}</td>
+        <td style="text-align:right;padding-right:0;color:var(--text3)">${t.yds.toLocaleString()}</td>
+      </tr>`).join('');
+  });
+}
+
+// ─── Load data ────────────────────────────────────────────────
+async function loadGroups(){
+  try{
+    allGroups=await sb('game_groups','GET',null,'?order=name.asc');
+    renderGroupSelect();renderGroupsList();renderHistGroupSelect();
+    // Auto-select Saturday Game (or first group if not found)
+    const sat=allGroups.find(g=>g.name.toLowerCase().includes('saturday'))||allGroups[0];
+    if(sat){
+      const sel=$('sel-group');
+      sel.value=sat.id;
+      currentGroupId=sat.id;
+      // Also pre-select in pairings, seed, and history selects
+      ['pair-group-sel','seed-group-sel','hist-group-sel'].forEach(id=>{
+        const el=$(id);if(el)el.value=sat.id;
+      });
+      await renderGameContent(sat.id);
+    }
+  }catch(e){toast('Error loading groups','err');}
+}
+async function loadPlayers(){
+  try{
+    allPlayers=await sb('players','GET',null,'?order=name.asc&select=id,name,nickname,created_at');
+    renderPlayersList();
+  }catch(e){toast('Error loading players','err');}
+}
+
+function renderGroupSelect(){
+  const opts='<option value="">Select group...</option>'+
+    allGroups.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+  // Update all group dropdowns at once
+  ['sel-group','pair-group-sel','seed-group-sel'].forEach(id=>{
+    const el=$(id);if(!el)return;
+    const cur=el.value;
+    el.innerHTML=opts;
+    if(cur)el.value=cur;
+  });
+}
+function renderHistGroupSelect(){
+  const sel=$('hist-group-sel');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Select group...</option>'+
+    allGroups.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+  if(cur)sel.value=cur;
+}
+
+// ─── Players list ─────────────────────────────────────────────
+function renderPlayersList(){
+  const el=$('players-list');
+  if(!allPlayers.length){el.innerHTML=`<div class="empty"><div class="ico">👤</div><p>No players yet.</p></div>`;return;}
+  el.innerHTML=allPlayers.map(p=>`
+    <div>
+      <div class="player-item">
+        <div class="av">${ini(p.name)}</div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:14px">${p.name}</div>
+          ${p.nickname?`<div style="font-size:12px;color:var(--text3);margin-top:1px">${p.nickname}</div>`:''}
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn btn-outline btn-xs" onclick="editPlayer('${p.id}','${p.name.replace(/'/g,"\\'")}','${(p.nickname||'').replace(/'/g,"\\'")}')">Edit</button>
+          <button class="hist-toggle" onclick="togglePlayerHist('${p.id}',this)">History ▾</button>
+        </div>
+      </div>
+      <div class="hist-body" id="phist-${p.id}">
+        <div class="loading" style="padding:10px"><span class="spinner"></span>Loading...</div>
+      </div>
+    </div>`).join('');
+}
+
+async function togglePlayerHist(pid,btn){
+  const body=$('phist-'+pid);
+  if(body.classList.contains('open')){
+    body.classList.remove('open');
+    btn.textContent='History ▾';
+    return;
+  }
+  body.classList.add('open');
+  btn.textContent='History ▴';
+  try{
+    const rounds=await sb('rounds','GET',null,`?player_id=eq.${pid}&order=played_on.desc,created_at.desc&select=*&limit=20`);
+    if(!rounds.length){body.innerHTML=`<p style="font-size:13px;color:var(--text3);padding:4px 0">No rounds recorded yet.</p>`;return;}
+    body.innerHTML=`<table class="hist-tbl">
+      <thead><tr><th>Date</th><th>Course</th><th>Tee</th><th>Score</th><th>Diff.</th></tr></thead>
+      <tbody>${rounds.map(r=>{
+        const tee=getTee(r.course,r.tee);
+        return `<tr>
+          <td>${new Date(r.played_on+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+          <td style="font-size:12px">${r.course}</td>
+          <td><span style="display:inline-flex;align-items:center">
+            <span class="tdot" style="background:${tee?tee.col:'#888'}"></span>${r.tee}</span></td>
+          <td style="font-weight:600">${r.score}</td>
+          <td style="color:var(--navy);font-weight:600">${parseFloat(r.differential).toFixed(1)}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }catch(e){body.innerHTML=`<p style="font-size:12px;color:var(--red)">Error loading rounds.</p>`;}
+}
+
+// ─── Edit / Add player modal ──────────────────────────────────
+function openPlayerModal(){
+  $('player-modal-title').textContent='Add Player';
+  $('player-modal-save').textContent='Add Player';
+  $('edit-player-id').value='';
+  $('new-player-name').value='';
+  $('new-player-nick').value='';
+  $('modal-player').classList.add('on');
+  setTimeout(()=>$('new-player-name').focus(),150);
+}
+function editPlayer(id,name,nick){
+  $('player-modal-title').textContent='Edit Player';
+  $('player-modal-save').textContent='Save Changes';
+  $('edit-player-id').value=id;
+  $('new-player-name').value=name;
+  $('new-player-nick').value=nick;
+  $('modal-player').classList.add('on');
+  setTimeout(()=>$('new-player-name').focus(),150);
+}
+async function savePlayer(){
+  const id=$('edit-player-id').value;
+  const name=$('new-player-name').value.trim();
+  const nick=$('new-player-nick').value.trim()||null;
+  if(!name){toast('Enter a name','err');return;}
+  try{
+    if(id){
+      await sb('players','PATCH',{name,nickname:nick},`?id=eq.${id}`);
+      toast('Player updated','ok');
+    }else{
+      await sb('players','POST',{name,nickname:nick},'');
+      toast('Player added','ok');
+    }
+    closeModal('modal-player');
+    await loadPlayers();
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+async function deletePlayerPrompt(id,name){
+  if(!confirm(`Remove "${name}"? Their rounds will also be deleted.`))return;
+  try{
+    await sb('rounds','DELETE',null,`?player_id=eq.${id}`);
+    await sb('group_players','DELETE',null,`?player_id=eq.${id}`);
+    await sb('players','DELETE',null,`?id=eq.${id}`);
+    await loadPlayers();toast('Player removed');
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+// ─── Groups ───────────────────────────────────────────────────
+function renderGroupsList(){
+  const el=$('groups-list');
+  if(!allGroups.length){el.innerHTML=`<div class="empty"><div class="ico">📅</div><p>No groups yet.</p></div>`;return;}
+  el.innerHTML=allGroups.map(g=>`
+    <div class="group-card">
+      <div class="group-card-hdr">
+        <h4>${g.name}</h4>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-xs" onclick="manageGroupPlayers('${g.id}','${g.name}')">Manage Players</button>
+          <button class="btn btn-xs" style="background:rgba(255,60,60,.15);color:#ff8080;border:1px solid rgba(255,100,100,.3)" onclick="deleteGroup('${g.id}','${g.name}')">Delete</button>
+        </div>
+      </div>
+      <div class="group-card-body"><span style="font-size:12px;color:var(--text3)">Created ${new Date(g.created_at).toLocaleDateString()}</span></div>
+    </div>`).join('');
+}
+
+// ─── Group change / game content ──────────────────────────────
+function noScoresThisWeek(){
+  if(!confirm('Mark this week as no game? Handicaps will not change and the score sheet will close.')) return;
+  gameSessionDone = true;
+  const gc=$('game-content');
+  gc.innerHTML=`
+    <div class="empty" style="padding:40px 20px">
+      <div class="ico">📋</div>
+      <p style="font-weight:600;margin-bottom:8px">No game this week</p>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:20px">Handicaps unchanged. See you next Saturday!</p>
+      <button class="btn btn-outline btn-sm" onclick="resetGameSession()">↺ Re-open Score Entry</button>
+    </div>`;
+}
+
+function resetGameSession(){
+  gameSessionGroupId = null;
+  gameSessionDone = false;
+  if(currentGroupId) renderGameContent(currentGroupId);
+}
+
+
+async function onGroupChange(){
+  const gid=$('sel-group').value;
+  currentGroupId=gid||null;
+  // Reset game session when group changes
+  gameSessionGroupId=null;
+  gameSessionDone=false;
+  if(!gid){$('game-content').innerHTML=`<div class="empty"><div class="ico">⛳</div><p>Select a game group above.</p></div>`;return;}
+  await renderGameContent(gid);
+}
+
+async function renderGameContent(gid){
+  const gc=$('game-content');
+  gc.innerHTML=`<div class="loading"><span class="spinner"></span>Loading...</div>`;
+  try{
+    const gps=await sb('group_players','GET',null,`?group_id=eq.${gid}&select=player_id`);
+    const pids=gps.map(x=>x.player_id);
+    if(!pids.length){gc.innerHTML=`<div class="alert-warn">No players in this group. Go to Groups → Manage Players.</div>`;return;}
+    const rounds=await sb('rounds','GET',null,`?group_id=eq.${gid}&order=played_on.asc,created_at.asc&select=*`);
+    const pm={};
+    allPlayers.forEach(p=>{if(pids.includes(p.id))pm[p.id]={...p,rounds:[]};});
+    rounds.forEach(r=>{if(pm[r.player_id])pm[r.player_id].rounds.push(r);});
+    Object.values(pm).forEach(p=>{if(p.rounds.length>4)p.rounds=p.rounds.slice(-4);});
+    const players=Object.values(pm).sort((a,b)=>a.name.localeCompare(b.name));
+    gc.innerHTML=buildGameContent(players);
+    twInfoUpdate();
+    // Mark this group as the live game session
+    gameSessionGroupId = gid;
+    gameSessionDone = false;
+  }catch(e){gc.innerHTML=`<div class="alert-warn">Error: ${e.message}</div>`;}
+}
+
+function buildGameContent(players){
+  const cnOpts=Object.keys(COURSES).map(c=>`<option>${c}</option>`).join('');
+  return `
+  <div class="course-selector">
+    <div class="cs-title">This Week — Course &amp; Tees (all players)</div>
+    <div class="cs-grid">
+      <div class="cs-field"><label>Course</label>
+        <div class="cs-arrow"><select id="tw-course" onchange="twCourseChange()">${Object.keys(COURSES).map(c=>`<option${c==='Elmwood'?' selected':''}>${c}</option>`).join('')}</select></div></div>
+      <div class="cs-field"><label>Tee Box</label>
+        <div class="cs-arrow"><select id="tw-tee" onchange="twInfoUpdate()">${teeOpts('Elmwood','Gold')}</select></div></div>
+      <div class="cs-field"><label>Gender</label>
+        <div class="cs-arrow"><select id="tw-gender" onchange="twInfoUpdate()"><option>Men</option><option>Women</option></select></div></div>
+      <div class="cs-info" id="tw-info">
+        <span>Rating <strong>—</strong></span><span>Slope <strong>—</strong></span><span>Par <strong>72</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh"><h3>Enter Scores</h3><span style="font-size:12px;color:var(--text3)">Leave blank if not playing</span></div>
+  <div class="card">
+    <div class="card-hdr"><h4>Score Entry</h4><span class="sub">Gross scores · tap ✎ to override index</span></div>
+    <div style="overflow-x:auto">
+      <table class="score-tbl">
+        <thead><tr>
+          <th>Player</th>
+          <th style="text-align:left">Score</th>
+          <th>Rounds</th>
+          <th>Index</th>
+        </tr></thead>
+        <tbody>
+          ${players.map(p=>{
+            const idx=computeIndex(p.rounds);
+            const idxDisplay=idx!==null?idx.toFixed(1):'—';
+            return `<tr id="str-${p.id}">
+              <td>${scoreLabel(p)}</td>
+              <td style="text-align:left">
+                <input class="score-input" type="number" inputmode="numeric" pattern="[0-9]*"
+                  id="ws-${p.id}" min="50" max="160" placeholder="—"/>
+              </td>
+              <td><span class="rounds-badge">${p.rounds.length}/4</span></td>
+              <td>
+                <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px">
+                  <span class="idx-chip" id="idx-display-${p.id}">${idxDisplay}</span>
+                  <button class="override-btn" onclick="openOverride('${p.id}','${idxDisplay}')" title="Override index">✎</button>
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn btn-navy btn-full" style="flex:2" onclick="submitScores()">
+      Submit Scores &amp; Calculate Handicaps
+    </button>
+    <button class="btn btn-outline btn-sm" style="flex:1;white-space:nowrap" onclick="noScoresThisWeek()">
+      No Game This Week
+    </button>
+  </div>
+  <div style="text-align:right;margin-top:-10px;margin-bottom:12px">
+    <button class="btn btn-ghost btn-xs" onclick="resetGameSession()" style="color:var(--text3);font-size:11px">↺ Reset / reload scores</button>
+  </div>
+
+  <div id="results-area" style="display:none">
+    <div class="sh"><h3>This Week — Handicap Index</h3></div>
+    <div class="card">
+      <div class="card-hdr"><h4 id="tw-board-title">Results</h4><span class="sub" id="tw-board-sub"></span></div>
+      <div id="tw-board-body"></div>
+    </div>
+
+    <div class="sh" style="margin-top:4px"><h3>Next Week — Course Handicaps</h3></div>
+    <div class="course-selector" style="margin-bottom:10px">
+      <div class="cs-title">Next Week — Course &amp; Tees</div>
+      <div class="cs-grid">
+        <div class="cs-field"><label>Course</label>
+          <div class="cs-arrow"><select id="nw-course" onchange="nwCourseChange()">${cnOpts}</select></div></div>
+        <div class="cs-field"><label>Tee Box</label>
+          <div class="cs-arrow"><select id="nw-tee" onchange="renderNWBoard()">${teeOpts('Elmwood','Gold')}</select></div></div>
+        <div class="cs-field"><label>Gender</label>
+          <div class="cs-arrow"><select id="nw-gender" onchange="renderNWBoard()"><option>Men</option><option>Women</option></select></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><h4>Playing Handicaps</h4><span class="sub" id="nw-board-sub"></span></div>
+      <div id="nw-board-body"></div>
+    </div>
+    <div style="height:16px"></div>
+  </div>`;
+}
+
+function twCourseChange(){
+  const cn=$('tw-course')?.value;if(!cn)return;
+  $('tw-tee').innerHTML=teeOpts(cn,'Gold');
+  twInfoUpdate();
+}
+function twInfoUpdate(){
+  const cn=$('tw-course')?.value||'Elmwood',tn=$('tw-tee')?.value||'Gold',gn=$('tw-gender')?.value||'Men';
+  if(!cn||!tn||!gn)return;
+  const tee=getTee(cn,tn);if(!tee)return;
+  const[r,s]=rs(tee,gn);
+  $('tw-info').innerHTML=`<span>Rating <strong>${r}</strong></span><span>Slope <strong>${s}</strong></span><span>Par <strong>${COURSES[cn].par}</strong></span>`;
+}
+function pairCourseChange(){
+  const cn=$('pair-course')?.value;if(!cn)return;
+  const opts=COURSES[cn].tees.map(t=>`<option${t.name==='Gold'?' selected':''}>${t.name}</option>`).join('');
+  $('pair-tee').innerHTML=opts;
+  updatePairHdr();
+}
+
+function updatePairHdr(){
+  const dateVal=$('pair-date')?.value;
+  const course=$('pair-course')?.value||'Elmwood';
+  const tee=$('pair-tee')?.value||'Gold';
+  let parts=[];
+  if(dateVal){
+    const d=new Date(dateVal+'T12:00:00');
+    parts.push(d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}));
+  }
+  parts.push(course+' · '+tee);
+  const sub=$('pair-hdr-sub');
+  if(sub) sub.textContent=parts.join(' · ');
+}
+
+function nwCourseChange(){
+  const cn=$('nw-course')?.value;if(!cn)return;
+  $('nw-tee').innerHTML=teeOpts(cn,'Gold');
+  renderNWBoard();
+}
+
+// ─── Submit scores ────────────────────────────────────────────
+async function submitScores(){
+  const gid=currentGroupId;if(!gid){toast('No group selected','err');return;}
+  const cn=$('tw-course').value,tn=$('tw-tee').value,gn=$('tw-gender').value;
+  const tee=getTee(cn,tn);const[rating,slope]=rs(tee,gn);
+  const today=new Date().toISOString().split('T')[0];
+  const entries=[];
+  allPlayers.forEach(p=>{
+    const el=$('ws-'+p.id);if(!el)return;
+    const score=parseFloat(el.value);
+    if(!score||score<50||score>160)return;
+    const diff=parseFloat(((score-rating)*(113/slope)).toFixed(2));
+    entries.push({player_id:p.id,group_id:gid,course:cn,tee:tn,gender:gn,score,differential:diff,played_on:today});
+  });
+  if(!entries.length){toast('Enter at least one score','err');return;}
+  try{
+    await sb('rounds','POST',entries,'');
+    for(const e of entries){
+      const pr=await sb('rounds','GET',null,`?player_id=eq.${e.player_id}&group_id=eq.${gid}&order=played_on.asc,created_at.asc&select=id`);
+      if(pr.length>4){const td=pr.slice(0,pr.length-4);for(const r of td)await sb('rounds','DELETE',null,`?id=eq.${r.id}`);}
+    }
+    toast(`${entries.length} score${entries.length>1?'s':''} saved`,'ok');
+    gameSessionDone = true;
+    await buildResults(gid,cn,tn,gn);
+    $('results-area').style.display='block';
+    $('results-area').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+async function buildResults(gid,cn,tn,gn){
+  const tee=getTee(cn,tn);const[r,s]=rs(tee,gn);
+  $('tw-board-title').textContent=`${cn} · ${tn}`;
+  $('tw-board-sub').textContent=`Rating ${r} · Slope ${s} · ${gn}`;
+  const gps=await sb('group_players','GET',null,`?group_id=eq.${gid}&select=player_id`);
+  const pids=gps.map(x=>x.player_id);
+  const rounds=await sb('rounds','GET',null,`?group_id=eq.${gid}&order=played_on.asc,created_at.asc&select=*`);
+  const pm={};
+  allPlayers.forEach(p=>{if(pids.includes(p.id))pm[p.id]={...p,rounds:[]};});
+  rounds.forEach(r=>{if(pm[r.player_id])pm[r.player_id].rounds.push(r);});
+  Object.values(pm).forEach(p=>{if(p.rounds.length>4)p.rounds=p.rounds.slice(-4);});
+  lastResults=Object.values(pm).filter(p=>p.rounds.length>0||indexOverrides[p.id]!==undefined).map(p=>{
+    // Use override index if set, otherwise compute from rounds
+    const computedIdx=computeIndex(p.rounds);
+    const idx=indexOverrides[p.id]!==undefined?indexOverrides[p.id]:computedIdx;
+    const avgDiff=p.rounds.length?p.rounds.reduce((s,r)=>s+parseFloat(r.differential),0)/p.rounds.length:null;
+    const isOverride=indexOverrides[p.id]!==undefined;
+    return{name:p.name,nickname:p.nickname||null,rounds:p.rounds.length,avgDiff,index:idx,isOverride};
+  }).sort((a,b)=>a.index-b.index);
+
+  $('tw-board-body').innerHTML=lastResults.map((p,i)=>`
+    <div class="result-row">
+      <div class="result-rank${i===0?' first':''}">${i+1}</div>
+      <div style="flex:1">
+        <div class="result-name">${p.nickname||p.name}${i===0?'<span class="low-badge">Low</span>':''}${p.isOverride?'<span class="low-badge" style="background:var(--gold)">Override</span>':''}</div>
+        <div class="result-meta">${p.nickname?p.name+' · ':''}${p.rounds} round${p.rounds>1?'s':''}${p.avgDiff!==null?' · avg diff '+p.avgDiff.toFixed(2):''}</div>
+      </div>
+      <div class="result-idx">${p.index.toFixed(1)}</div>
+    </div>`).join('');
+  renderNWBoard();
+}
+
+function renderNWBoard(){
+  if(!lastResults.length)return;
+  const cn=$('nw-course')?.value,tn=$('nw-tee')?.value,gn=$('nw-gender')?.value;
+  if(!cn||!tn||!gn)return;
+  const tee=getTee(cn,tn);const[r,s]=rs(tee,gn);
+  const par=COURSES[cn].par;
+  $('nw-board-sub').textContent=`${cn} · ${tn} · ${gn} · Rating ${r} · Slope ${s}`;
+  const rows=lastResults.map(p=>({...p,ch:computeCH(p.index,s,r,par)})).sort((a,b)=>a.ch-b.ch);
+  $('nw-board-body').innerHTML=rows.map((p,i)=>`
+    <div class="result-row">
+      <div class="result-rank${i===0?' first':''}">${i+1}</div>
+      <div style="flex:1">
+        <div class="result-name">${p.nickname||p.name}${i===0?'<span class="low-badge gold">Low</span>':''}</div>
+        <div class="result-meta">${p.nickname?p.name+' · ':''}Index ${p.index.toFixed(1)}</div>
+      </div>
+      <div class="result-ch">${p.ch}</div>
+    </div>`).join('');
+}
+
+// ─── Print / Share ────────────────────────────────────────────
+function printResults(){
+  if(!lastResults.length){toast('Calculate handicaps first','err');return;}
+  const grp=allGroups.find(g=>g.id===currentGroupId);
+  $('print-header').textContent=`No Sand Cap · ${grp?grp.name:''} · ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}`;
+  window.print();
+}
+
+// ─── Season history ───────────────────────────────────────────
+async function loadHistory(){
+  const gid=$('hist-group-sel').value;
+  const el=$('history-content');
+  if(!gid){el.innerHTML=`<div class="empty"><div class="ico">📊</div><p>Select a group.</p></div>`;return;}
+  el.innerHTML=`<div class="loading"><span class="spinner"></span>Loading history...</div>`;
+  try{
+    // Get all rounds for this group
+    const rounds=await sb('rounds','GET',null,`?group_id=eq.${gid}&order=played_on.desc,created_at.desc&select=*`);
+    if(!rounds.length){el.innerHTML=`<div class="empty"><div class="ico">📊</div><p>No rounds recorded yet for this group.</p></div>`;return;}
+
+    // Group rounds by played_on date
+    const byDate={};
+    rounds.forEach(r=>{
+      if(!byDate[r.played_on])byDate[r.played_on]={date:r.played_on,course:r.course,tee:r.tee,gender:r.gender,rounds:[]};
+      byDate[r.played_on].rounds.push(r);
+    });
+
+    const weeks=Object.values(byDate).sort((a,b)=>b.date.localeCompare(a.date));
+
+    el.innerHTML=weeks.map((w,wi)=>{
+      // Build player results for this week using whatever rounds each player had AT that time
+      // For history display we just show what was scored that week
+      const scored=w.rounds.map(r=>{
+        const p=allPlayers.find(x=>x.id===r.player_id);
+        return{name:p?p.name:'Unknown',nickname:p?p.nickname:null,score:r.score,diff:parseFloat(r.differential)};
+      }).sort((a,b)=>a.score-b.score);
+
+      const dateStr=new Date(w.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+      const tee=getTee(w.course,w.tee);
+
+      return `<div class="week-card">
+        <div class="week-hdr" onclick="toggleWeek('week-${wi}',this)">
+          <div>
+            <h4>${dateStr}</h4>
+            <div class="sub">${w.course} · ${w.tee} · ${w.gender} · ${scored.length} player${scored.length>1?'s':''}</div>
+          </div>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="week-body" id="week-${wi}">
+          ${scored.map((p,i)=>`
+            <div class="week-row">
+              <div class="result-rank${i===0?' first':''}" style="width:22px;height:22px;font-size:10px">${i+1}</div>
+              <div style="flex:1">
+                <div style="font-weight:600;font-size:13px">${p.nickname||p.name}</div>
+                ${p.nickname?`<div style="font-size:11px;color:var(--text3)">${p.name}</div>`:''}
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:16px;font-weight:700;color:var(--navy)">${p.score}</div>
+                <div style="font-size:11px;color:var(--text3)">diff ${p.diff.toFixed(1)}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML=`<div class="alert-warn">Error: ${e.message}</div>`;}
+}
+
+function toggleWeek(id,hdr){
+  const body=$(id);
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  hdr.classList.toggle('open',!isOpen);
+}
+
+// ─── Groups CRUD ──────────────────────────────────────────────
+function openGroupModal(){$('new-group-name').value='';$('modal-group').classList.add('on');setTimeout(()=>$('new-group-name').focus(),150);}
+function closeModal(id){$(id).classList.remove('on');}
+
+async function createGroup(){
+  const name=$('new-group-name').value.trim();
+  if(!name){toast('Enter a group name','err');return;}
+  try{await sb('game_groups','POST',{name},'');closeModal('modal-group');await loadGroups();toast('Group created','ok');}
+  catch(e){toast('Error: '+e.message,'err');}
+}
+async function deleteGroup(id,name){
+  if(!confirm(`Delete "${name}"? All rounds will be deleted.`))return;
+  try{
+    await sb('rounds','DELETE',null,`?group_id=eq.${id}`);
+    await sb('group_players','DELETE',null,`?group_id=eq.${id}`);
+    await sb('game_groups','DELETE',null,`?id=eq.${id}`);
+    if(currentGroupId===id){currentGroupId=null;$('game-content').innerHTML=`<div class="empty"><div class="ico">⛳</div><p>Select a game group above.</p></div>`;}
+    await loadGroups();toast('Group deleted');
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+async function manageGroupPlayers(gid,gname){
+  const gps=await sb('group_players','GET',null,`?group_id=eq.${gid}&select=player_id`);
+  const inGroup=new Set(gps.map(x=>x.player_id));
+  const m=document.createElement('div');m.className='modal-bg on';m.id='modal-gp';
+  m.innerHTML=`<div class="modal" style="max-width:480px">
+    <div class="modal-handle"></div>
+    <h3>Players in "${gname}"</h3>
+    <div style="max-height:360px;overflow-y:auto;margin:4px 0">
+      ${!allPlayers.length?'<p style="color:var(--text3);font-size:13px;padding:8px 0">No players yet.</p>':
+        allPlayers.map(p=>`
+        <label style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:14px;font-weight:500;color:var(--text)">
+          <input type="checkbox" id="gp-${p.id}" ${inGroup.has(p.id)?'checked':''} style="width:18px;height:18px;accent-color:var(--navy);flex-shrink:0"/>
+          <div class="av av-sm">${ini(p.name)}</div>
+          <div>
+            <div>${p.name}</div>
+            ${p.nickname?`<div style="font-size:11px;color:var(--text3);font-weight:400">${p.nickname}</div>`:''}
+          </div>
+        </label>`).join('')}
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('modal-gp').remove()">Cancel</button>
+      <button class="btn btn-navy btn-sm" onclick="saveGroupPlayers('${gid}')">Save</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+}
+async function saveGroupPlayers(gid){
+  const checked=allPlayers.filter(p=>document.getElementById('gp-'+p.id)?.checked).map(p=>p.id);
+  try{
+    await sb('group_players','DELETE',null,`?group_id=eq.${gid}`);
+    if(checked.length)await sb('group_players','POST',checked.map(pid=>({group_id:gid,player_id:pid})),'');
+    document.getElementById('modal-gp')?.remove();
+    toast('Players updated','ok');
+    if(currentGroupId===gid)await renderGameContent(gid);
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+// ─── Pair mode toggle ──────────────────────────────────────────
+let pairMode = 'auto';
+let manualGroups = [];  // [{cap:4, players:[...]}]
+
+function setPairMode(mode){
+  pairMode = mode;
+  $('mode-auto').classList.toggle('on', mode==='auto');
+  $('mode-manual').classList.toggle('on', mode==='manual');
+  $('auto-btn-row').style.display  = mode==='auto'   ? 'flex'  : 'none';
+  $('manual-hint').style.display   = mode==='manual' ? 'block' : 'none';
+  $('pairings-output').style.display = 'none';
+  $('pair-warning').style.display    = 'none';
+  $('late-add-bar').style.display    = 'none';
+  if(mode==='manual' && $('pairing-checklist').style.display!=='none'){
+    $('manual-builder').style.display='block';
+    clearManualGroups();
+  } else {
+    $('manual-builder').style.display='none';
+  }
+}
+
+// ─── Manual pairing builder ────────────────────────────────────
+function addManualGroup(cap){
+  manualGroups.push({cap, players:[]});
+  renderManualBuilder();
+}
+
+function clearManualGroups(){
+  manualGroups=[];
+  renderManualBuilder();
+}
+
+function renderManualBuilder(){
+  const area = $('manual-groups-area');
+  const pool = $('unassigned-pool');
+  if(!area||!pool) return;
+
+  // All assigned player IDs
+  const assigned = new Set(manualGroups.flatMap(g=>g.players.map(p=>p.id)));
+  const selected = pairingPlayers.filter(p=>$('pc-'+p.id)?.checked);
+
+  // Render group slots
+  area.innerHTML = manualGroups.length === 0
+    ? `<div style="font-size:13px;color:var(--text3);text-align:center;padding:10px 0">No groups yet. Tap + Foursome or + Threesome above.</div>`
+    : manualGroups.map((g,gi)=>`
+      <div class="manual-group-slot">
+        <div class="mgs-hdr">
+          <h5>Group ${gi+1} <span style="font-size:11px;font-weight:400;color:var(--text3)">(${g.cap}-player)</span></h5>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="mgs-count">${g.players.length}/${g.cap}</span>
+            <button class="xbtn" onclick="removeManualGroup(${gi})">✕</button>
+          </div>
+        </div>
+        <div class="mgs-players" id="mgs-${gi}">
+          ${g.players.map((p,pi)=>`
+            <div class="mgs-player-chip" onclick="removeFromGroup(${gi},${pi})">
+              ${p.nickname||p.name}
+              <span class="chip-x">✕</span>
+            </div>`).join('')}
+          ${g.players.length < g.cap
+            ? `<div style="font-size:11px;color:var(--text3);align-self:center;padding:4px 2px">${g.cap-g.players.length} spot${g.cap-g.players.length>1?'s':''} open — tap player below</div>`
+            : ''}
+        </div>
+      </div>`).join('');
+
+  // Render unassigned pool
+  const unassigned = selected.filter(p=>!assigned.has(p.id));
+  pool.innerHTML = unassigned.length === 0
+    ? `<span style="font-size:12px;color:var(--text3)">All players assigned</span>`
+    : unassigned.map(p=>`
+        <div class="pool-chip" onclick="assignToNextOpen('${p.id}')">
+          ${p.nickname||p.name}
+          <span style="font-size:10px;color:var(--text3)">${p.index!==null?p.index.toFixed(1):'—'}</span>
+        </div>`).join('');
+}
+
+function removeManualGroup(gi){
+  manualGroups.splice(gi,1);
+  renderManualBuilder();
+}
+
+function removeFromGroup(gi,pi){
+  manualGroups[gi].players.splice(pi,1);
+  renderManualBuilder();
+}
+
+function assignToNextOpen(pid){
+  const p = pairingPlayers.find(x=>x.id===pid);
+  if(!p) return;
+  // Find first group with open spot
+  const g = manualGroups.find(g=>g.players.length < g.cap);
+  if(!g){ toast('No open spots — add a group first','err'); return; }
+  g.players.push({...p, isBlind:false});
+  renderManualBuilder();
+}
+
+function commitManualPairings(){
+  const unassigned = pairingPlayers.filter(p=>{
+    if(!$('pc-'+p.id)?.checked) return false;
+    return !manualGroups.some(g=>g.players.find(x=>x.id===p.id));
+  });
+  if(unassigned.length){
+    if(!confirm(`${unassigned.length} selected player${unassigned.length>1?'s are':' is'} not in any group. Save anyway?`)) return;
+  }
+  if(!manualGroups.length){ toast('Add at least one group','err'); return; }
+
+  currentPairings = manualGroups.map(g=>({
+    players: g.players,
+    cap: g.cap,
+    isBlind: false
+  }));
+  renderPairingsCards();
+  $('pairings-output').style.display='block';
+  $('late-add-bar').style.display='flex';
+  $('pairings-output').scrollIntoView({behavior:'smooth',block:'start'});
+  toast('Manual groups saved','ok');
+}
+
+
+let pairingPlayers = [];
+let currentPairings = [];
+let dragSrc = null;
+
+function bestCleanCount(n){
+  if(n < 3) return {sizes:[], clean:false};
+  if(n % 4 === 0) return {sizes:Array(n/4).fill(4), clean:true, format:4};
+  if(n % 3 === 0) return {sizes:Array(n/3).fill(3), clean:true, format:3};
+  return {sizes:[], clean:false, drop:n};
+}
+
+function generatePairings(forceMode){
+  const selected = pairingPlayers.filter(p=>$('pc-'+p.id)?.checked);
+  const n = selected.length;
+
+  if(!pairingPlayers.length){
+    toast('Load a group first','err'); return;
+  }
+  if(n < 3){
+    toast(`Select at least 3 players (${n} selected)`,'err'); return;
+  }
+
+  $('pair-warning').style.display = 'none';
+
+  let groupSizes, blindsNeeded = 0, droppedCount = 0;
+
+  if(forceMode === 'blind-3'){
+    // Fill up to next multiple of 3 with blind draws
+    const next = Math.ceil(n/3)*3;
+    groupSizes   = Array(next/3).fill(3);
+    blindsNeeded = next - n;
+  } else if(forceMode === 'blind-4'){
+    // Fill up to next multiple of 4 with blind draws
+    const next = Math.ceil(n/4)*4;
+    groupSizes   = Array(next/4).fill(4);
+    blindsNeeded = next - n;
+  } else if(forceMode === 'drop-3'){
+    // Drop to nearest multiple of 3 below n
+    const m = Math.floor(n/3)*3;
+    groupSizes   = Array(m/3).fill(3);
+    droppedCount = n - m;
+  } else if(forceMode === 'drop-4'){
+    // Drop to nearest multiple of 4 below n
+    const m = Math.floor(n/4)*4;
+    groupSizes   = Array(m/4).fill(4);
+    droppedCount = n - m;
+  } else {
+    // Auto
+    const r = bestCleanCount(n);
+    if(r.clean){
+      groupSizes = r.sizes;
+    } else {
+      // Doesn't divide cleanly — show override options, default to foursomes dropping extras
+      const m4 = Math.floor(n/4)*4;
+      const m3 = Math.floor(n/3)*3;
+      groupSizes   = Array(Math.floor(n/4)).fill(4);
+      droppedCount = n - m4;
+      $('pair-warning-msg').textContent =
+        `${n} players doesn't divide evenly into 3s or 4s. Choose an option below:`;
+      $('pair-warning').style.display = 'block';
+      // Don't generate yet if nothing clean — just show the banner
+      if(!groupSizes.length){ return; }
+    }
+  }
+
+  if(!groupSizes.length){ toast('Not enough players','err'); return; }
+
+  // Sort by handicap ascending (nulls last)
+  const sorted = [...selected].sort((a,b)=>{
+    const ai = a.index!==null ? a.index : 99;
+    const bi = b.index!==null ? b.index : 99;
+    return ai - bi;
+  });
+
+  const totalSlots = groupSizes.reduce((a,b)=>a+b,0);
+  const realSlots  = totalSlots - blindsNeeded;
+  const playing    = sorted.slice(0, realSlots);
+  const numGroups  = groupSizes.length;
+  const finalGroups = groupSizes.map(cap=>({players:[], cap, isBlind:false}));
+
+  // Snake-fill real players
+  let gi=0, dir=1;
+  for(let si=0; si<playing.length; si++){
+    finalGroups[gi].players.push({...playing[si], isBlind:false});
+    if(numGroups > 1){
+      gi += dir;
+      if(gi >= numGroups){ gi=numGroups-1; dir=-1; }
+      else if(gi < 0)    { gi=0;           dir= 1; }
+    }
+  }
+
+  // Pad with blind draws
+  finalGroups.forEach((g,gidx)=>{
+    let b=0;
+    while(g.players.length < g.cap){
+      g.players.push({id:`blind-${gidx}-${b++}`, name:'Blind Draw', nickname:'Blind Draw', index:null, isBlind:true});
+      g.isBlind = true;
+    }
+  });
+
+  currentPairings = finalGroups;
+  renderPairingsCards();
+  $('pairings-output').style.display = 'block';
+  $('late-add-bar').style.display    = 'flex';
+  $('pairings-output').scrollIntoView({behavior:'smooth', block:'start'});
+
+  if(droppedCount > 0 && !forceMode){
+    toast(`${droppedCount} player${droppedCount>1?'s':''} not assigned — use override to include`, 'err');
+  }
+}
+
+function generateWithBlind(t){ generatePairings(t==='3'?'blind-3':'blind-4'); }
+function generateForce3s()   { generatePairings('drop-3');  }
+function generateForce4s()   { generatePairings('drop-4');  }
+
+function shufflePairings(){
+  generatePairings();
+  toast('Pairings re-shuffled');
+}
+
+// Populate group selector on pairings tab — only sets value if not already set
+function renderPairGroupSelect(){
+  // renderGroupSelect already handles pair-group-sel
+  // Just trigger load if a group is already selected
+  const gid=$('pair-group-sel').value;
+  if(gid) loadPairingPlayers();
+}
+
+async function loadPairingPlayers(){
+  const gid=$('pair-group-sel').value;
+  $('pairing-checklist').style.display='none';
+  $('pairings-output').style.display='none';
+  $('late-add-bar').style.display='none';
+  if(!gid) return;
+
+  const gc=$('pcl-body');
+  gc.innerHTML=`<div class="loading" style="padding:14px"><span class="spinner"></span>Loading players...</div>`;
+  $('pairing-checklist').style.display='block';
+
+  try{
+    const gps = await sb('group_players','GET',null,`?group_id=eq.${gid}&select=player_id`);
+    const pids = gps.map(x=>x.player_id);
+    const rounds = await sb('rounds','GET',null,`?group_id=eq.${gid}&order=played_on.asc,created_at.asc&select=*`);
+    const pm={};
+    allPlayers.forEach(p=>{ if(pids.includes(p.id)) pm[p.id]={...p,rounds:[]}; });
+    rounds.forEach(r=>{ if(pm[r.player_id]) pm[r.player_id].rounds.push(r); });
+    Object.values(pm).forEach(p=>{ if(p.rounds.length>4) p.rounds=p.rounds.slice(-4); });
+    pairingPlayers = Object.values(pm).map(p=>({
+      ...p,
+      index: computeIndex(p.rounds),
+      ch: null
+    })).sort((a,b)=>a.name.localeCompare(b.name));
+    renderChecklist();
+    updateLateAddSel();
+    // Show manual builder if in manual mode
+    if(pairMode==='manual'){
+      $('manual-builder').style.display='block';
+      clearManualGroups();
+    }
+  }catch(e){ toast('Error loading players: '+e.message,'err'); }
+}
+
+function renderChecklist(){
+  const body=$('pcl-body');
+  body.innerHTML = pairingPlayers.map(p=>`
+    <div class="pcl-item" onclick="toggleCheck('pc-${p.id}')">
+      <input type="checkbox" id="pc-${p.id}" onchange="updatePclCount()" onclick="event.stopPropagation()"/>
+      <div class="av av-sm">${ini(p.name)}</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${p.nickname||p.name}</div>
+        ${p.nickname?`<div style="font-size:11px;color:var(--text3)">${p.name}</div>`:''}
+      </div>
+      <div style="font-size:14px;font-weight:700;color:var(--navy);min-width:32px;text-align:right">
+        ${p.index!==null?p.index.toFixed(1):'—'}
+      </div>
+    </div>`).join('');
+  updatePclCount();
+}
+
+function toggleCheck(id){
+  const cb=$(id); cb.checked=!cb.checked; updatePclCount();
+  if(pairMode==='manual') renderManualBuilder();
+}
+function checkAll(val){
+  pairingPlayers.forEach(p=>{ const cb=$('pc-'+p.id); if(cb) cb.checked=val; });
+  updatePclCount();
+  if(pairMode==='manual') renderManualBuilder();
+}
+function updatePclCount(){
+  const n = pairingPlayers.filter(p=>$('pc-'+p.id)?.checked).length;
+  if(n < 3){
+    $('pcl-count').textContent = n===0 ? '0 selected' : `${n} selected · need ${3-n} more`;
+    return;
+  }
+  const r = bestCleanCount(n);
+  if(r.clean){
+    const grps = r.sizes.length;
+    const fmt  = r.format;
+    $('pcl-count').textContent = `${n} selected · ${grps} ${fmt===4?'foursome':'threesome'}${grps>1?'s':''}`;
+  } else {
+    $('pcl-count').textContent = `${n} selected · doesn't divide into 3s or 4s — pick an override`;
+  }
+}
+
+
+function renderPairingsCards(){
+  const groupNames = ['Group 1','Group 2','Group 3','Group 4','Group 5','Group 6','Group 7','Group 8'];
+  const colors = ['#1565C0','#2E7D32','#F57F17','#6A1B9A','#C62828','#00838F','#4527A0','#558B2F'];
+
+  // Compute total handicap per group for display
+  const totals = currentPairings.map(g=>
+    g.players.filter(p=>!p.isBlind).reduce((s,p)=>s+(p.index!==null?p.index:0),0)
+  );
+  const minTotal = Math.min(...totals);
+  const maxTotal = Math.max(...totals);
+
+  const sizes = currentPairings.map(g=>g.players.length);
+  const threes = sizes.filter(s=>s===3).length;
+  const fours  = sizes.filter(s=>s===4).length;
+  let fmtLabel = [];
+  if(fours)  fmtLabel.push(`${fours} foursome${fours>1?'s':''}`);
+  if(threes) fmtLabel.push(`${threes} threesome${threes>1?'s':''}`);
+  $('pairings-title').textContent = `${currentPairings.length} Group${currentPairings.length>1?'s':''}`;
+  $('pairings-meta').textContent  = fmtLabel.join(' + ') + ' · drag to swap players';
+
+  $('pairings-cards').innerHTML = currentPairings.map((g,gi)=>{
+    const realPlayers = g.players.filter(p=>!p.isBlind);
+    const total = realPlayers.reduce((s,p)=>s+(p.index!==null?p.index:0),0);
+    const diff = total - minTotal;
+    const diffClass = diff < 0.5 ? 'best' : 'ok';
+    const diffLabel = diff < 0.5 ? 'Best balance' : `+${diff.toFixed(1)} vs best`;
+
+    return `<div class="group-card-pair" id="gcard-${gi}" ondragover="onDragOver(event,${gi})" ondrop="onDrop(event,${gi})">
+      <div class="gcp-hdr">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:10px;height:10px;border-radius:50%;background:${colors[gi%colors.length]};flex-shrink:0"></div>
+          <h4>${groupNames[gi]}</h4>
+          ${g.isBlind?'<span class="blind-tag">Blind Draw</span>':''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="gcp-hdcp">Total: ${total.toFixed(1)}</span>
+          <span class="gcp-diff ${diffClass}">${diffLabel}</span>
+        </div>
+      </div>
+      <div id="gcard-body-${gi}">
+        ${g.players.map((p,pi)=>renderPairPlayerRow(p,gi,pi)).join('')}
+      </div>
+      <div class="pair-summary">
+        <span>${g.players.length} players</span>
+        <strong>Avg index: ${realPlayers.length?( total/realPlayers.length).toFixed(1):'—'}</strong>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPairPlayerRow(p,gi,pi){
+  if(p.isBlind) return `
+    <div class="pair-player-row pcl-item blind-draw" id="prow-${gi}-${pi}" data-gi="${gi}" data-pi="${pi}">
+      <span class="drag-handle">⠿</span>
+      <div class="av av-sm" style="background:var(--gold)">?</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:13px;color:var(--gold)">Blind Draw</div>
+        <div style="font-size:11px;color:var(--text3)">Replace with late entry</div>
+      </div>
+      <span class="pair-hdcp-badge" style="color:var(--gold)">—</span>
+    </div>`;
+  return `
+    <div class="pair-player-row" id="prow-${gi}-${pi}" draggable="true"
+      data-gi="${gi}" data-pi="${pi}"
+      ondragstart="onDragStart(event,${gi},${pi})"
+      ondragend="onDragEnd(event)">
+      <span class="drag-handle">⠿</span>
+      <div class="av av-sm">${ini(p.name)}</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:13px">${p.nickname||p.name}</div>
+        ${p.nickname?`<div style="font-size:11px;color:var(--text3)">${p.name}</div>`:''}
+      </div>
+      <span class="pair-hdcp-badge">${p.index!==null?p.index.toFixed(1):'—'}</span>
+    </div>`;
+}
+
+// ─── Drag & drop to swap players between groups ────────────────
+function onDragStart(e,gi,pi){
+  dragSrc={gi,pi};
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+}
+function onDragEnd(e){ e.currentTarget.classList.remove('dragging'); dragSrc=null; }
+function onDragOver(e,gi){ e.preventDefault(); e.dataTransfer.dropEffect='move'; }
+function onDrop(e,targetGi){
+  e.preventDefault();
+  if(!dragSrc||dragSrc.gi===targetGi) return;
+  // Swap the dragged player to the top of the target group
+  const srcPlayer = currentPairings[dragSrc.gi].players[dragSrc.pi];
+  // Find first non-blind slot in target to swap with
+  const targetPi = currentPairings[targetGi].players.findIndex(p=>!p.isBlind);
+  if(targetPi===-1){ toast('Cannot swap into a blind draw slot','err'); return; }
+  const targetPlayer = currentPairings[targetGi].players[targetPi];
+  currentPairings[dragSrc.gi].players[dragSrc.pi] = targetPlayer;
+  currentPairings[targetGi].players[targetPi] = srcPlayer;
+  // Update blind flags
+  currentPairings.forEach(g=>{ g.isBlind = g.players.some(p=>p.isBlind); });
+  renderPairingsCards();
+  toast('Players swapped');
+}
+
+// ─── Late entry ────────────────────────────────────────────────
+function updateLateAddSel(){
+  const sel=$('late-add-sel');
+  const selectedIds = new Set(pairingPlayers.filter(p=>$('pc-'+p.id)?.checked).map(p=>p.id));
+  const notIn = pairingPlayers.filter(p=>!selectedIds.has(p.id));
+  sel.innerHTML='<option value="">Select player...</option>'+
+    notIn.map(p=>`<option value="${p.id}">${p.nickname||p.name}${p.nickname?' ('+p.name+')':''}</option>`).join('');
+}
+function addLateEntry(){
+  const sel=$('late-add-sel');
+  const pid=sel.value;
+  if(!pid){toast('Select a player','err');return;}
+  const player=pairingPlayers.find(p=>p.id===pid);
+  if(!player) return;
+
+  // Find a blind draw slot or add to smallest group
+  let placed=false;
+  for(let gi=0;gi<currentPairings.length;gi++){
+    const bi=currentPairings[gi].players.findIndex(p=>p.isBlind);
+    if(bi!==-1){
+      currentPairings[gi].players[bi]={...player,isBlind:false};
+      currentPairings[gi].isBlind=currentPairings[gi].players.some(p=>p.isBlind);
+      placed=true; break;
+    }
+  }
+  if(!placed){
+    // Add to smallest group
+    const smallest=currentPairings.reduce((a,b)=>a.players.length<=b.players.length?a:b);
+    smallest.players.push({...player,isBlind:false});
+  }
+
+  // Mark as participating
+  const cb=$('pc-'+pid); if(cb) cb.checked=true;
+  updatePclCount();
+  updateLateAddSel();
+  renderPairingsCards();
+  toast(`${player.nickname||player.name} added`,'ok');
+  sel.value='';
+}
+
+// ─── Print pairings ────────────────────────────────────────────
+function printPairings(){
+  if(!currentPairings.length){toast('Generate pairings first','err');return;}
+  window.print();
+}
+
+// ─── SEED HANDICAPS ───────────────────────────────────────────
+function renderSeedGroupSelect(){
+  // renderGroupSelect already handles seed-group-sel
+  // Just trigger load if a group is already selected
+  const gid=$('seed-group-sel').value;
+  if(gid) loadSeedPlayers();
+}
+
+async function loadSeedPlayers(){
+  const gid=$('seed-group-sel').value;
+  const el=$('seed-content');
+  if(!gid){el.innerHTML=`<div class="empty"><div class="ico">🌱</div><p>Select a group to load players.</p></div>`;return;}
+  el.innerHTML=`<div class="loading"><span class="spinner"></span>Loading players...</div>`;
+  try{
+    const gps=await sb('group_players','GET',null,`?group_id=eq.${gid}&select=player_id`);
+    const pids=gps.map(x=>x.player_id);
+    if(!pids.length){el.innerHTML=`<div class="alert-warn">No players in this group yet.</div>`;return;}
+    const rounds=await sb('rounds','GET',null,`?group_id=eq.${gid}&select=player_id`);
+    const hasRounds=new Set(rounds.map(r=>r.player_id));
+    const groupPlayers=allPlayers.filter(p=>pids.includes(p.id));
+    const done=groupPlayers.filter(p=>hasRounds.has(p.id)).length;
+    const total=groupPlayers.length;
+
+    el.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+        <span style="font-size:13px;color:var(--text2);font-weight:500">${done} of ${total} players have rounds · ${total-done} need seeding</span>
+        <button class="btn btn-navy btn-sm" onclick="submitSeedIndexes('${gid}')">⬆ Import All Indexes</button>
+      </div>
+      <div class="seed-progress"><div class="seed-progress-bar" style="width:${total?Math.round(done/total*100):0}%"></div></div>
+      <div class="card">
+        <div class="card-hdr">
+          <h4>GHIN Handicap Index Entry</h4>
+          <span class="sub">Lookup each player in your GHIN app · enter their index below</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="seed-tbl">
+            <thead><tr>
+              <th>Player</th>
+              <th style="text-align:center">GHIN Index</th>
+              <th style="text-align:right">Status</th>
+            </tr></thead>
+            <tbody>
+              ${groupPlayers.map(p=>{
+                const hasr=hasRounds.has(p.id);
+                return `<tr class="${hasr?'has-rounds':''}">
+                  <td>
+                    <div style="font-weight:600;font-size:14px">${p.nickname||p.name}</div>
+                    ${p.nickname?`<div style="font-size:11px;color:var(--text3)">${p.name}</div>`:''}
+                  </td>
+                  <td style="text-align:center">
+                    <input class="seed-input" type="number" inputmode="decimal"
+                      id="si-${p.id}" min="-10" max="54" step="0.1"
+                      placeholder="${hasr?'—':'e.g. 12.4'}"
+                      ${hasr?'disabled title="Already has rounds — clear them first to re-seed"':''}/>
+                  </td>
+                  <td style="text-align:right">
+                    ${hasr
+                      ?'<span class="seed-status done">✓ Has rounds</span>'
+                      :'<span class="seed-status empty" id="ss-'+p.id+'">Needs seed</span>'}
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="height:16px"></div>`;
+
+    // Live status dot as user types
+    groupPlayers.filter(p=>!hasRounds.has(p.id)).forEach(p=>{
+      const inp=$('si-'+p.id), stat=$('ss-'+p.id);
+      if(inp&&stat) inp.addEventListener('input',()=>{
+        const v=parseFloat(inp.value);
+        stat.className='seed-status'+(isNaN(v)?' empty':' new');
+        stat.textContent=isNaN(v)?'Needs seed':'Ready ✓';
+      });
+    });
+  }catch(e){el.innerHTML=`<div class="alert-warn">Error: ${e.message}</div>`;}
+}
+
+async function submitSeedIndexes(gid){
+  const entries=[];
+  allPlayers.forEach(p=>{
+    const inp=$('si-'+p.id);
+    if(!inp||inp.disabled) return;
+    const idx=parseFloat(inp.value);
+    if(isNaN(idx)||idx<-10||idx>54) return;
+    entries.push({player_id:p.id,index:idx});
+  });
+  if(!entries.length){toast('No indexes entered yet','err');return;}
+  if(!confirm(`Seed ${entries.length} player${entries.length>1?'s':''} with their GHIN indexes? Each will get one synthetic starting round.`)) return;
+
+  // Back-calculate differential from index: index = avg × 0.96 → diff = index / 0.96
+  // Use Prairie Green Gold Men as reference tee (rating 69.5, slope 123)
+  const REF={rating:69.5,slope:123,course:'Prairie Green',tee:'Gold',gender:'Men'};
+  const seedDate='2026-04-11';
+
+  const rounds=entries.map(e=>{
+    const diff=parseFloat((e.index/0.96).toFixed(2));
+    // Reconstruct a plausible gross score from the diff
+    const score=Math.round(diff*(REF.slope/113)+REF.rating);
+    return{player_id:e.player_id,group_id:gid,course:REF.course,tee:REF.tee,
+      gender:REF.gender,score,differential:diff,played_on:seedDate};
+  });
+
+  try{
+    for(let i=0;i<rounds.length;i+=10)
+      await sb('rounds','POST',rounds.slice(i,i+10),'');
+    toast(`${entries.length} index${entries.length>1?'es':''} imported`,'ok');
+    await loadSeedPlayers();
+  }catch(e){toast('Error: '+e.message,'err');}
+}
+
+// ─── Navigation ───────────────────────────────────────────────
+function switchPanel(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
+  $('panel-'+name).classList.add('on');
+  btn.classList.add('on');
+  $('main-content').scrollTop=0;
+  if(name==='players') renderPlayersList();
+  if(name==='groups')  renderGroupsList();
+  if(name==='game'){
+    // Only reload if: no live session, different group, or session is done
+    if(currentGroupId && (gameSessionGroupId !== currentGroupId || gameSessionDone)){
+      gameSessionDone = false;
+      renderGameContent(currentGroupId);
+    }
+  }
+  if(name==='history'){
+    const hsel=$('hist-group-sel');
+    if(currentGroupId&&!hsel.value) hsel.value=currentGroupId;
+    loadHistory();
+  }
+  if(name==='pairings'){
+    const psel=$('pair-group-sel');
+    if(currentGroupId&&!psel.value) psel.value=currentGroupId;
+    if(psel.value) loadPairingPlayers();
+  }
+  if(name==='seed'){
+    const ssel=$('seed-group-sel');
+    if(currentGroupId&&!ssel.value) ssel.value=currentGroupId;
+    if(ssel.value) loadSeedPlayers();
+  }
+}
+
+// Close modals on bg click
+document.addEventListener('click',e=>{
+  ['modal-group','modal-player'].forEach(id=>{if(e.target.id===id)closeModal(id);});
+  if(e.target.id==='modal-gp')e.target.remove();
+});
+['new-group-name'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')createGroup();});
+});
+['new-player-name','new-player-nick'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('keydown',e=>{if(e.key==='Enter')savePlayer();});
+});
+document.getElementById('override-val')?.addEventListener('keydown',e=>{if(e.key==='Enter')saveOverride();});
+
+// ─── HANDICAP OVERRIDE ────────────────────────────────────────
+function openOverride(pid, currentIdx){
+  const p=allPlayers.find(x=>x.id===pid);
+  $('override-pid').value=pid;
+  $('override-name').textContent=p?(p.nickname||p.name):'Player';
+  const existing=indexOverrides[pid];
+  $('override-val').value=existing!==undefined?existing:(currentIdx==='—'?'':currentIdx);
+  $('modal-override').classList.add('on');
+  setTimeout(()=>{ $('override-val').select(); $('override-val').focus(); },150);
+}
+
+function saveOverride(){
+  const pid=$('override-pid').value;
+  const val=parseFloat($('override-val').value);
+  if(isNaN(val)||val<-10||val>54){ toast('Enter a valid index (-10 to 54)','err'); return; }
+  indexOverrides[pid]=parseFloat(val.toFixed(1));
+  // Update display in table
+  const chip=$('idx-display-'+pid);
+  const btn=chip?.nextElementSibling;
+  const row=$('str-'+pid);
+  if(chip){ chip.textContent=val.toFixed(1); chip.style.color='var(--gold)'; }
+  if(btn)  btn.classList.add('override-active');
+  if(row)  row.classList.add('has-override');
+  closeModal('modal-override');
+  toast('Index overridden to '+val.toFixed(1),'ok');
+}
+
+function clearOverride(){
+  const pid=$('override-pid').value;
+  delete indexOverrides[pid];
+  // Restore computed index display
+  const p=allPlayers.find(x=>x.id===pid);
+  // Find player's rounds from current game content to recompute
+  const chip=$('idx-display-'+pid);
+  const btn=chip?.nextElementSibling;
+  const row=$('str-'+pid);
+  if(chip){ chip.style.color=''; }
+  if(btn)  btn.classList.remove('override-active');
+  if(row)  row.classList.remove('has-override');
+  closeModal('modal-override');
+  toast('Override cleared');
+}
+
+// ─── SCORE SHEET ──────────────────────────────────────────────
+const SS_PLAYERS = [
+  {name:"Adam Peterson",       nick:"AP"},
+  {name:"Barry Matson",        nick:"Boo Boo"},
+  {name:"Bill Carland",        nick:"Birdie Bill"},
+  {name:"Brad Tindall",        nick:"AZ Observer"},
+  {name:"Carl Rapp",           nick:"Rapp"},
+  {name:"Case Blom",           nick:null},
+  {name:"Chad Veire",          nick:"Pro"},
+  {name:"Chris Lane",          nick:null},
+  {name:"D Weisenbach",        nick:null},
+  {name:"Dale Swier",          nick:"Fuzzy"},
+  {name:"Dan Grider",          nick:"Grides"},
+  {name:"David Wobbema",       nick:"Wobb"},
+  {name:"Don Koster",          nick:"DK"},
+  {name:"Gary Noble",          nick:"Nobs"},
+  {name:"George Christopulos", nick:null},
+  {name:"Gerry Summa",         nick:null},
+  {name:"Greg Hurley",         nick:"FH"},
+  {name:"James Lather",        nick:"Slippin Jimmy"},
+  {name:"Jeff Wilber",         nick:null},
+  {name:"John Egan",           nick:"Hands Down"},
+  {name:"John Frederick",      nick:"FRED"},
+  {name:"John Goettsch",       nick:"ROLL TIDE"},
+  {name:"John Hime",           nick:"Himer"},
+  {name:"Jon Broek",           nick:null},
+  {name:"Ken Giegling",        nick:"Kenny G"},
+  {name:"Kent Ochsner",        nick:"Ox"},
+  {name:"Kim Gross",           nick:"Gross"},
+  {name:"Mark Buehler",        nick:"B"},
+  {name:"Mark Swanson",        nick:null},
+  {name:"Marty VanDeMore",     nick:"MO"},
+  {name:"Matt Enderson",       nick:null},
+  {name:"Michael Krsnak",      nick:null},
+  {name:"Pat Bruhn",           nick:"Bruhn"},
+  {name:"Paul Reiter",         nick:"PR"},
+  {name:"Rick Bishop",         nick:"VICTIM"},
+  {name:"Rick Dunlap",         nick:"Dunny"},
+  {name:"Sam Goodhope",        nick:null},
+  {name:"Scott Ramharter",     nick:"Rambo"},
+  {name:"Sean Farah",          nick:"Farah"},
+  {name:"Steve Loge",          nick:"Bubba"},
+  {name:"Steven Sanford",      nick:"Seve"},
+  {name:"Tim Paauw",           nick:null},
+  {name:"Tom Beare",           nick:"Spotted Bear"},
+  {name:"Tom Boyum",           nick:"Tommy"},
+  {name:"Tom Jansa",           nick:"TJ"},
+];
+
+function nextSaturday(){
+  const d=new Date();
+  const diff=(6-d.getDay()+7)%7||7;
+  d.setDate(d.getDate()+diff);
+  return d.toISOString().split('T')[0];
+}
+
+function openScoreSheet(){
+  $('ss-date').value=nextSaturday();
+  $('ss-course').value='Prairie Green';
+  $('ss-tee').value='Gold';
+  updateScoreSheet();
+  $('modal-scoresheet').classList.add('on');
+}
+
+function updateScoreSheet(){
+  const dateVal=$('ss-date').value;
+  const course=$('ss-course').value;
+  const tee=$('ss-tee').value;
+  let dateStr='________________';
+  if(dateVal){
+    const d=new Date(dateVal+'T12:00:00');
+    dateStr=d.toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'});
+  }
+  const rows=SS_PLAYERS.map((p,i)=>{
+    const div=i>0&&i%5===0?' divider':'';
+    return `<div class="ss-prow${div}">
+      <div class="ss-num">${i+1}</div>
+      <div class="ss-name">
+        <div class="nm">${p.nick||p.name}</div>
+        ${p.nick?`<div class="nn">${p.name}</div>`:''}
+      </div>
+      <div class="ss-score"><div class="ss-box"></div></div>
+    </div>`;
+  }).join('');
+
+  $('ss-sheet-content').innerHTML=`
+    <div class="ss-sheet-hdr">
+      <div>
+        <h4>No Sand Cap · Score Sheet</h4>
+        <div class="sub">Saturday Game · nosandcap.com</div>
+        <div class="ss-meta">
+          <div><span class="lbl">Date</span><span class="val">${dateStr}</span></div>
+          <div><span class="lbl">Course</span><span class="val">${course}</span></div>
+          <div><span class="lbl">Tees</span><span class="val">${tee}</span></div>
+        </div>
+      </div>
+      <div style="font-size:34px;line-height:1;flex-shrink:0">⛳</div>
+    </div>
+    <div class="ss-col-hdrs">
+      <div class="ss-ch">#</div>
+      <div class="ss-ch">Player</div>
+      <div class="ss-ch center">Score</div>
+    </div>
+    ${rows}
+    <div class="ss-ftr">
+      <p><strong>Write your gross score in the box.</strong> Return to game coordinator.</p>
+      <p>nosandcap.com · Rolling 4-Round Handicap System</p>
+    </div>`;
+}
+
+function printScoreSheet(){
+  // Open in a new window for clean printing
+  const dateVal=$('ss-date').value;
+  const course=$('ss-course').value;
+  const tee=$('ss-tee').value;
+  let dateStr='________________';
+  if(dateVal){
+    const d=new Date(dateVal+'T12:00:00');
+    dateStr=d.toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'});
+  }
+  const rows=SS_PLAYERS.map((p,i)=>{
+    const bg=i%2===0?'#fff':'#FAFBFD';
+    const bt=i>0&&i%5===0?'border-top:2px solid #D0D9E8;':'';
+    return `<div style="display:grid;grid-template-columns:30px 1fr 90px;align-items:center;min-height:36px;border-bottom:1px solid #EBF0F8;background:${bg};${bt}">
+      <div style="padding:0 0 0 10px;font-size:11px;color:#B8C8DC;font-weight:700">${i+1}</div>
+      <div style="padding:5px 10px">
+        <div style="font-size:13px;font-weight:700;color:#0D1B2A;line-height:1.2">${p.nick||p.name}</div>
+        ${p.nick?`<div style="font-size:11px;color:#7A90A8;margin-top:1px">${p.name}</div>`:''}
+      </div>
+      <div style="padding:4px 12px 4px 6px;text-align:center">
+        <div style="width:56px;height:28px;border:2px solid #B8C8DC;border-radius:5px;background:#fff;display:inline-block"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const win=window.open('','_blank','width=700,height=900');
+  win.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>No Sand Cap · Score Sheet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:'Inter',system-ui,sans-serif;background:#fff;padding:0}
+      @media print{
+        *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+        @page{margin:.4in;size:letter portrait}
+      }
+    </style>
+  </head><body>
+    <div style="background:#002B5C;color:#fff;padding:14px 18px 12px;display:flex;align-items:flex-start;justify-content:space-between;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+      <div>
+        <div style="font-size:18px;font-weight:800">No Sand Cap · Score Sheet</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Saturday Game · nosandcap.com</div>
+        <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+          <div><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Date</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:1px">${dateStr}</div></div>
+          <div><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Course</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:1px">${course}</div></div>
+          <div><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.4px;font-weight:600">Tees</div><div style="font-size:13px;font-weight:700;color:#fff;margin-top:1px">${tee}</div></div>
+        </div>
+      </div>
+      <div style="font-size:34px;line-height:1;flex-shrink:0">⛳</div>
+    </div>
+    <div style="display:grid;grid-template-columns:30px 1fr 90px;background:#EBF0F8;border-bottom:2px solid #B8C8DC;padding:6px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+      <div style="font-size:10px;font-weight:700;color:#3A5070;text-transform:uppercase;letter-spacing:.4px;padding:0 10px">#</div>
+      <div style="font-size:10px;font-weight:700;color:#3A5070;text-transform:uppercase;letter-spacing:.4px;padding:0 10px">Player</div>
+      <div style="font-size:10px;font-weight:700;color:#3A5070;text-transform:uppercase;letter-spacing:.4px;padding:0 10px;text-align:center">Score</div>
+    </div>
+    ${rows}
+    <div style="background:#EBF0F8;padding:8px 18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact">
+      <p style="font-size:10px;color:#7A90A8"><strong style="color:#3A5070">Write your gross score in the box.</strong> Return to game coordinator.</p>
+      <p style="font-size:10px;color:#7A90A8">nosandcap.com · Rolling 4-Round Handicap System</p>
+    </div>
+    <script>window.onload=function(){window.print();}<\/script>
+  </body></html>`);
+  win.document.close();
+}
+
+// ─── Init ─────────────────────────────────────────────────────
+async function init(){
+  populateCourseTables();
+  // Default pair date to next Saturday
+  const pd=$('pair-date');
+  if(pd) pd.value=nextSaturday();
+  // Default pair course/tee
+  pairCourseChange();
+  await Promise.all([loadGroups(),loadPlayers()]);
+  // Start on pairings tab
+  renderPairGroupSelect();
+}
+</script>
+</body>
+</html>
